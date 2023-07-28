@@ -31,7 +31,7 @@ function postLogin(parameter){
                 )
                 reject("DB ERR")
             }
-            // resolve(db_data)
+            resolve(db_data)
         })
     })
 }
