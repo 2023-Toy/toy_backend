@@ -6,8 +6,26 @@ var logger = require('morgan');
 
 var loginRouter = require('./routes/login.routes');
 var usersRouter = require('./routes/users');
+var communityRouter = require('./routes/community.routes');
 
 var app = express();
+
+//
+
+const mysql = require('mysql2')
+
+const client = mysql.createConnection({
+  user: 'root',
+  password: '1q2w3e4r', //본인의 db root 계정 비밀번호
+  database: 'toy', //본인의 db
+  host: '210.119.104.148',
+  port: 3306
+})
+
+client.connect()
+
+//
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -21,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', loginRouter);
 app.use('/users', usersRouter);
+app.use('/board', communityRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
