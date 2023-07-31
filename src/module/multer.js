@@ -44,12 +44,7 @@ const upload = multer({
         files: 10
     }
 });
-router.post('/deal', upload.array('deal_img'), (req, res) => {
-    console.log(req.files);
-    res.send('upload!!!');
-})
 
 module.exports = {
     upload
 }
-module.exports = router;
