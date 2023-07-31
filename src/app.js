@@ -7,6 +7,7 @@ var logger = require('morgan');
 var loginRouter = require('./routes/login.routes');
 var usersRouter = require('./routes/users');
 var dealRouter = require('./routes/deal.routes');
+var imgRouter = require('./module/multer');
 
 var app = express();
 

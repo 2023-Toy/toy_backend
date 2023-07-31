@@ -2,7 +2,7 @@ const dealDao = require('../DAO/deal.dao')
 
 async function postDeal(postDeal_req) {
     try {
-        if(!postDeal_req) {  //이게 맞나요...
+        if(!postDeal_req) {  //ㅠ?
             return {
                 "Message" : "body data가 없습니다.",
                 "Status" : 406

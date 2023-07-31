@@ -1,5 +1,4 @@
 const loginDao = require('../DAO/login.dao')
-const { param } = require('../app')
 
 async function getLogin(access_token){
     try{
