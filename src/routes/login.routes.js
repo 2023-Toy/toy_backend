@@ -4,7 +4,7 @@ var router = express.Router();
 const loginController = require('../controller/login.controller')
 
 router.get('/login', loginController.getLogin);
-// router.post('/login', loginController.postLogin);
+router.post('/login', loginController.postLogin);
 // router.delete('/withdraw', loginController.deleteLogin);
 
 module.exports = router;

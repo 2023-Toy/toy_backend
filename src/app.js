@@ -6,7 +6,12 @@ var logger = require('morgan');
 
 var loginRouter = require('./routes/login.routes');
 var usersRouter = require('./routes/users');
+<<<<<<< HEAD
 var communityRouter = require('./routes/community.routes');
+=======
+var dealRouter = require('./routes/deal.routes');
+var imgRouter = require('./module/multer');
+>>>>>>> d3607d4fae8aca8a1d548438143262d59e842081
 
 var app = express();
 
@@ -31,15 +36,23 @@ client.connect()
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(logger('dev'));
+if(process.env.ENODE_ENV=='production'){
+  app.use(logger('combined'))
+}else{
+  app.use(logger('dev'))
+}
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', loginRouter);
 app.use('/users', usersRouter);
+<<<<<<< HEAD
 app.use('/board', communityRouter);
+=======
+app.use('/', dealRouter);
+>>>>>>> d3607d4fae8aca8a1d548438143262d59e842081
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
