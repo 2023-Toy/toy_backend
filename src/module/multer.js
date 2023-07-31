@@ -1,8 +1,6 @@
-const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const router = express.Router();
 
 //파일 존재 확인
 try {
@@ -44,12 +42,7 @@ const upload = multer({
         files: 10
     }
 });
-router.post('/deal', upload.array('deal_img'), (req, res) => {
-    console.log(req.files);
-    res.send('upload!!!');
-})
 
 module.exports = {
     upload
 }
-module.exports = router;
