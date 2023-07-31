@@ -13,6 +13,11 @@ function getLogin(token){
                 )
                 reject("DB ERR")
             }
+            logger.info(
+                'DB success [user]' +
+                '\n \t' + queryData +
+                '\n \t' + db_data
+            )
             resolve(db_data)
         })
     })
