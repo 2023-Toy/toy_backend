@@ -1,0 +1,14 @@
+2023-07-27 06:58:21 [ERROR] - DB error [community]
+ 	ReferenceError: searchValue is not defined
+2023-07-27 07:30:34 [ERROR] - DB error [community]
+ 	ReferenceError: searchValue is not defined
+2023-07-27 07:30:58 [ERROR] - DB error [user]
+ 	SELECT * FROM community
+ 	Error: ER_ACCESS_DENIED_ERROR: Access denied for user ''@'localhost' (using password: NO)
+2023-07-27 07:30:58 [ERROR] - DB error [community]
+ 	DB ERR
+2023-07-27 07:31:44 [ERROR] - DB error [user]
+ 	SELECT * FROM community
+ 	Error: ER_ACCESS_DENIED_ERROR: Access denied for user ''@'localhost' (using password: NO)
+2023-07-27 07:31:44 [ERROR] - DB error [community]
+ 	DB ERR
