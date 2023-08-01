@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var loginRouter = require('./routes/login.routes');
 var usersRouter = require('./routes/users');
+var communityRouter = require('./routes/community.routes');
 var dealRouter = require('./routes/deal.routes');
 //var imgRouter = require('./module/multer');
 
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', loginRouter);
 app.use('/users', usersRouter);
+app.use('/board', communityRouter);
 app.use('/', dealRouter);
 
 // catch 404 and forward to error handler
