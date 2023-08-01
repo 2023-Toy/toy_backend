@@ -8,7 +8,12 @@ async function getLogin(req, res, next){
 }
 
 async function postLogin(req, res, next){
-    const {user_name, user_age, profile_img, access_token} = req.body
+    console.log(req.body)
+    console.log(req.file)
+    const {user_name, user_age, access_token} = req.body
+    const profile_img = req.file.originalname
+    console.log(req.file.filename)
+    console.log(profile_img)
     const parameter = {
         name : user_name,
         age : user_age,
@@ -16,7 +21,11 @@ async function postLogin(req, res, next){
         token : access_token
     }
     console.log(parameter)
-    const postlogin_data = await LoginService.postLogin(parameter)
+    //const postlogin_data = await LoginService.postLogin(parameter)
+    const postlogin_data = {
+        "Message" : "test",
+        "Status" : 200
+    }
     return res.status(postlogin_data.Status).json(postlogin_data)
 }
 
