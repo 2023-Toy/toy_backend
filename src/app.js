@@ -8,7 +8,6 @@ var loginRouter = require('./routes/login.routes');
 var usersRouter = require('./routes/users');
 var communityRouter = require('./routes/community.routes');
 var dealRouter = require('./routes/deal.routes');
-var imgRouter = require('./module/multer');
 
 var app = express();
 
@@ -22,7 +21,7 @@ if(process.env.ENODE_ENV=='production'){
   app.use(logger('dev'))
 }
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
