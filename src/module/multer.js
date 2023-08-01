@@ -75,7 +75,7 @@ const profile_upload = multer({
     fileFilter: fileFilter,
     storage: multer.diskStorage({
         destination(req, file, done) {
-            done(null, 'src/public/images/profile');
+            done(null, 'src/public/images/community');
         },
         filename(req, file, done) {
             const ext = path.extname(file.originalname);
