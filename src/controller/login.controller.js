@@ -8,28 +8,26 @@ async function getLogin(req, res, next){
 }
 
 async function postLogin(req, res, next){
-    console.log(req.body)
-    console.log(req.file)
     const {user_name, user_age, access_token} = req.body
-    const profile_img = req.file.originalname
-    console.log(req.file.filename)
-    console.log(profile_img)
+    const profile_img = req.file != undefined ? "profile/"+req.file.filename : "profile/default.jpg"
     const parameter = {
         name : user_name,
         age : user_age,
         img : profile_img,
         token : access_token
     }
-    console.log(parameter)
-    //const postlogin_data = await LoginService.postLogin(parameter)
-    const postlogin_data = {
-        "Message" : "test",
-        "Status" : 200
-    }
+    const postlogin_data = await LoginService.postLogin(parameter)
     return res.status(postlogin_data.Status).json(postlogin_data)
+}
+
+async function deleteLogin(req, res, next){
+    const id = req.body.user_id
+    const deletelogin_data = await LoginService.deleteLogin(id)
+    return res.status(deletelogin_data.Status).json(deletelogin_data)
 }
 
 module.exports = {
     getLogin,
-    postLogin
+    postLogin,
+    deleteLogin
 }
