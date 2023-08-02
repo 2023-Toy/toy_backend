@@ -23,16 +23,18 @@ try {
 }
 
 //file Filter
-function fileFilter (req, file, done) {
+const fileFilter = (req, file, done) => {
+    console.log(file.mimetype)
     const type = file.mimetype.split('/');
     const fileType = type[1];
+    console.log(fileType)
     if(fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg' || fileType == 'gif'){
-            req.fileValidationError = null;
-            done(null, true); //파일 허용
+        req.fileValidationError = null;
+        done(null, true); //파일 허용
     }
     else{
-            req.fileValidationError = "지정된 파일이 아닙니다.";
-            done(null, false) //파일 거부
+        req.fileValidationError = "지정된 파일이 아닙니다.";
+        done(req.fileValidationError, false) //파일 거부
     }
 }
 
@@ -75,7 +77,7 @@ const profile_upload = multer({
     fileFilter: fileFilter,
     storage: multer.diskStorage({
         destination(req, file, done) {
-            done(null, 'src/public/images/community');
+            done(null, 'src/public/images/profile');
         },
         filename(req, file, done) {
             const ext = path.extname(file.originalname);
