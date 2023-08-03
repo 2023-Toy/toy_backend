@@ -13,7 +13,6 @@ async function getMain(){
         //     const tags = await communityDao.findTag(element.community_id);
         //     element.tag_name = tags.map(tag => tag.tag_name);
         // }))
-        console.log(community_data);
         return {
             "Message" : "성공",
             "Status" : 200,
