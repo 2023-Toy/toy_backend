@@ -9,5 +9,7 @@ const DealController = require('../controller/deal.controller')
 //router.get('/deal', DealController.getDeal);
 
 router.post('/deal', uploads.deal_upload.array('deal_img'), DealController.postDeal);
+router.put('/deal/edit', DealController.putDeal);  //수정 필요
+router.get('/deal/search', DealController.getlistDeal);
 
 module.exports = router;

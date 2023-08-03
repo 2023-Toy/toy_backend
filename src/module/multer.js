@@ -24,10 +24,8 @@ try {
 
 //file Filter
 const fileFilter = (req, file, done) => {
-    console.log(file.mimetype)
     const type = file.mimetype.split('/');
     const fileType = type[1];
-    console.log(fileType)
     if(fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg' || fileType == 'gif'){
         req.fileValidationError = null;
         done(null, true); //파일 허용
