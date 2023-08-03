@@ -1,6 +1,7 @@
 const loginDao = require('../DAO/login.dao')
 const fs = require("fs")
 const logger = require('../config/logger')
+const sign = require('../module/jwt').sign
 
 async function getLogin(access_token){
     try{
@@ -34,9 +35,15 @@ async function postLogin(parameter){
                 "Status" : 406
             }
         }
-        await loginDao.postLogin(parameter)
+        const id = await loginDao.postLogin(parameter)
+        const user = {
+            "id" : id,
+            "token" : parameter.token
+        }
+        const jwt_token = await sign(user)
         return {
             "Message" : "성공",
+            "jwt_token" : jwt_token,
             "Status" : 200,
         }
     }

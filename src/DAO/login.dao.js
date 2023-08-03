@@ -46,7 +46,7 @@ function postLogin(parameter){
             logger.info(
                 '회원가입 Success ▶\t' + parameter.name + " 성공\n"
             )
-            resolve(db_data)
+            resolve(db_data.insertId)
         })
     })
 }
