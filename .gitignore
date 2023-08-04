@@ -2,4 +2,7 @@ node_modules
 package-lock.json
 .env
 src/public/images
+log/*.json
+log/*.log
 log/
+secretkey.js

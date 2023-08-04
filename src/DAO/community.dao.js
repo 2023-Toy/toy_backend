@@ -1,6 +1,50 @@
 const db = require('../config/db');
 const logger = require('../config/logger')
 
+function findTag(id){
+    return new Promise((resolve, reject) => {
+        console.log("findTag 들어옴")
+        var queryData = `select t.tag_name from Community_tag ct
+        join tag t on t.tag_id = ct.tag_id
+        where ct.community_id = ${id};`
+        db.query(queryData, (error, data) => {
+            if(error){
+                logger.error(
+                    'DB error [community_tag]'+
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject(error)
+            }
+            console.log("반환값 : " , data)
+            resolve(data)
+        })
+    })
+}
+
+function getMain(){
+    return new Promise((resolve, reject) => {
+        var queryData = `select c.community_id, c.community_title, c.community_content, count(community_image_id) as img_count, count(comment_id) as comment_count from Community c
+        left join Comment c2 on c.community_id = c2.community_id
+        left join Community_image ci on ci.community_id = c.community_id
+        GROUP BY community_id 
+        ORDER BY c.community_id desc
+        limit 5;`
+        db.query(queryData, (error, db_data) => {
+            if(error){
+                logger.error(
+                    'DB error [community]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            console.log(db_data)
+            resolve(db_data)
+        })
+    })
+}
+
 // 게시글 추가
 function postCommunity(community_title, community_content) {
   return new Promise((resolve, reject) => {
@@ -56,77 +100,11 @@ function updateCommunity(community_id, community_title, community_content) {
 })
 }
 
-// 게시글 검색
-function getCommunity(community_search) {
-  return new Promise((resolve, reject) => {
-    const queryData = `SELECT * FROM community`;
-    db.query(queryData, [community_search, community_search], (error, db_data) => {
-        if(error){
-            logger.error(
-                'DB error [user]' +
-                '\n \t' + queryData +
-                '\n \t' + error
-            )
-            reject("DB ERR")
-        }
-        resolve(db_data)
-    })
-})
-}
-
-// 게시글 조회
-function viewCommunity(community_search) {
-    return new Promise((resolve, reject) => {
-      const queryData = `SELECT * FROM community WHERE community_title LIKE ? OR community_content LIKE ?`;
-      const searchValue = `%${community_search}%`;
-      db.query(queryData, [searchValue, searchValue], (error, db_data) => {
-        if(error){
-            logger.error(
-                'DB error [user]' +
-                '\n \t' + queryData +
-                '\n \t' + error
-            )
-            reject("DB ERR")
-        }
-        resolve(db_data)
-    })
-})
-}
   
-  module.exports = {
+module.exports = {
+    getMain,
     postCommunity,
     deleteCommunity,
     updateCommunity,
-    getCommunity,
-    viewCommunity
-  };
-  
-
-/*
- DB 이름 : toy
- 테이블 이름 : Community
-
- 테이블 안의 열
- 1. 이름 : community_id
- 데이터 유형 : int
- 기본값 : AUTO_INCREMENT
- PRIMARY
- 커뮤니티 id
-
- 2. 이름 : user_id
- 데이터 유형 : int
- 외래키
- 회원 id
-
- 3. 이름 : community_title
- 데이터 유형 : varchar
- 제목
-
- 4. 이름 : community_content
- 데이터 유형 : varchar
- 내용
-
- 5. 이름 : community_date
- 데이터 유형 : date
- 작성일
-*/
+    findTag
+}
