@@ -1,27 +1,6 @@
 const db = require('../config/db');
 const logger = require('../config/logger')
 
-function findTag(id){
-    return new Promise((resolve, reject) => {
-        console.log("findTag 들어옴")
-        var queryData = `select t.tag_name from Community_tag ct
-        join tag t on t.tag_id = ct.tag_id
-        where ct.community_id = ${id};`
-        db.query(queryData, (error, data) => {
-            if(error){
-                logger.error(
-                    'DB error [community_tag]'+
-                    '\n \t' + queryData +
-                    '\n \t' + error
-                )
-                reject(error)
-            }
-            console.log("반환값 : " , data)
-            resolve(data)
-        })
-    })
-}
-
 function getMain(){
     return new Promise((resolve, reject) => {
         var queryData = `select c.community_id, c.community_title, c.community_content, count(community_image_id) as img_count, count(comment_id) as comment_count from Community c
@@ -33,7 +12,7 @@ function getMain(){
         db.query(queryData, (error, db_data) => {
             if(error){
                 logger.error(
-                    'DB error [community]' +
+                    'DB error [community_메인화면]' +
                     '\n \t' + queryData +
                     '\n \t' + error
                 )
@@ -41,6 +20,83 @@ function getMain(){
             }
             console.log(db_data)
             resolve(db_data)
+        })
+    })
+}
+
+function getCommunity(){
+    return new Promise((resolve, reject) => {
+        var queryData = `select c.community_id, c.community_title, c.community_content, c.community_date, count(c2.comment_id) as count_comment FROM Community c
+                         left join Community_tag ct on ct.community_id = c.community_id
+                         left join Comment c2 on c2.community_id = c.community_id
+                         group by c.community_id;`
+        db.query(queryData, (error, db_data) => {
+            if(error){
+                logger.error(
+                    'DB error [community_커뮤니티 탭]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            resolve(db_data)
+        })
+    })
+}
+
+function getCommunityImg(id){
+    return new Promise((resolve, reject) => {
+        var queryData = `select ci.community_path from Community_image ci
+                        left join Community c ON ci.community_id = c.community_id
+                        where ci.community_id = ${id};`
+        db.query(queryData, (error, db_data) => {
+            if(error){
+                logger.error(
+                    'DB error [community_이미지]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            console.log(db_data)
+            resolve(db_data)
+        })
+    })
+}
+
+function getCommunityBoard(id){
+    return new Promise((resolve, reject) => {
+        const queryData = `select c.community_title, c.community_content, c.community_date, u.user_name, u.grade, u.profile_img FROM Community c
+                           left join \`user\` u ON u.user_id = c.user_id
+                           where c.community_id  = ${id};`
+        db.query(queryData, (error, db_data) => {
+            if(error){
+                logger.error(
+                    'DB error [community_글 조회]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            resolve(db_data)
+        })
+    })
+}
+
+function getCommunityComment(id){
+    return new Promise((resolve, reject) => {
+        const queryData = `select c.community_id, c.comment_content, c.comment_date, u.user_name, u.profile_img, count(c.comment_id) FROM Comment c
+                           join \`user\` u on u.user_id = c.user_id
+                           where c.community_id = ${id}
+                           GROUP BY comment_id;`
+        db.query(queryData, (error, db_data) => {
+            if(error){
+                logger.error(
+                    'DB error [community_댓글 목록]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+            }
         })
     })
 }
@@ -103,8 +159,10 @@ function updateCommunity(community_id, community_title, community_content) {
   
 module.exports = {
     getMain,
+    getCommunity,
+    getCommunityImg,
+    getCommunityBoard,
     postCommunity,
     deleteCommunity,
     updateCommunity,
-    findTag
 }

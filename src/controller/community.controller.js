@@ -1,8 +1,19 @@
 const CommunityService = require('../service/community.service')
 
 async function getMain(req, res, next){
-    const getcommunity_data = await CommunityService.getMain()
-    return res.status(getcommunity_data.Status).json(getcommunity_data)
+    const getCommunity_data = await CommunityService.getMain()
+    return res.status(getCommunity_data.Status).json(getCommunity_data)
+}
+
+async function getCommunity(req, res, next){
+    const getCommunity_data = await CommunityService.getCommunity()
+    return res.status(getCommunity_data.Status).json(getCommunity_data)
+}
+
+async function getCommunityBoard(req, res, next) {
+    const id = req.query.community_id
+    const getCommunity_data = await CommunityService.getCommunityBoard(id)
+    return res.status(getCommunity_data.Status).json(getCommunity_data)
 }
 
 async function postCommunity(req, res, next){
@@ -39,6 +50,8 @@ async function updateCommunity(req, res, next){
 
 module.exports = {
     getMain,
+    getCommunity,
+    getCommunityBoard,
     postCommunity,
     deleteCommunity,
     updateCommunity
