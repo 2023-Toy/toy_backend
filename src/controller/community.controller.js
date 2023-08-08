@@ -16,6 +16,14 @@ async function getCommunityBoard(req, res, next) {
     return res.status(getCommunity_data.Status).json(getCommunity_data)
 }
 
+async function getSearch(req, res, next){
+    const search = '%' + req.query.search_data + '%'
+    console.log(search)
+    const getCommunity_data = await CommunityService.getSearch(search)
+    return res.status(getCommunity_data.Status).json(getCommunity_data)
+
+}
+
 async function postCommunity(req, res, next){
     const community_title = req.query.community_title;
     const community_content = req.query.community_content;
@@ -52,6 +60,7 @@ module.exports = {
     getMain,
     getCommunity,
     getCommunityBoard,
+    getSearch,
     postCommunity,
     deleteCommunity,
     updateCommunity

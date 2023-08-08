@@ -10,6 +10,6 @@ const communityController = require('../controller/community.controller')
 router.get('/', authUtil.checkToken, communityController.getCommunityBoard)
 router.get('/main', authUtil.checkToken, communityController.getMain)
 router.get('/community', authUtil.checkToken, communityController.getCommunity)
-
+router.get('/search', authUtil.checkToken, communityController.getSearch)
 
 module.exports = router;

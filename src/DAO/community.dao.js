@@ -26,10 +26,12 @@ function getMain(){
 
 function getCommunity(){
     return new Promise((resolve, reject) => {
-        var queryData = `select c.community_id, c.community_title, c.community_content, c.community_date, count(c2.comment_id) as count_comment FROM Community c
+        var queryData = `select c.community_id, c.community_title, c.community_content, c.community_date, ci.community_path, count(c2.comment_id) as count_comment FROM Community c
                          left join Community_tag ct on ct.community_id = c.community_id
                          left join Comment c2 on c2.community_id = c.community_id
-                         group by c.community_id;`
+                         left join Community_image ci on ci.community_id = c.community_id
+                         group by c.community_id
+                         order by c.community_id desc;`
         db.query(queryData, (error, db_data) => {
             if(error){
                 logger.error(
@@ -85,7 +87,7 @@ function getCommunityBoard(id){
 
 function getCommunityComment(id){
     return new Promise((resolve, reject) => {
-        const queryData = `select c.community_id, c.comment_content, c.comment_date, u.user_name, u.profile_img, count(c.comment_id) FROM Comment c
+        const queryData = `select c.community_id, c.comment_content, c.comment_date, u.user_name, u.profile_img FROM Comment c
                            join \`user\` u on u.user_id = c.user_id
                            where c.community_id = ${id}
                            GROUP BY comment_id;`
@@ -96,7 +98,30 @@ function getCommunityComment(id){
                     '\n \t' + queryData +
                     '\n \t' + error
                 )
+                reject("DB ERR")
             }
+            resolve(db_data)
+        })
+    })
+}
+
+function getSearch(search){
+    return new Promise((resolve, reject) => {
+        const queryData = `select c.community_title, c.community_content, c.community_date, ci.community_path, count(c2.comment_id) as count_comment from Community c
+                                  left join Comment c2 on c2.community_id = c.community_id
+                                  left join Community_image ci on ci.community_id = c.community_id
+                                  where c.community_title LIKE '${search}' OR c.community_content LIKE '${search}'
+                                  GROUP BY c2.comment_id;`
+        db.query(queryData, (error, db_data) => {
+            if(error){
+                logger.error(
+                    'DB error [community_검색]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            resolve(db_data)
         })
     })
 }
@@ -162,6 +187,8 @@ module.exports = {
     getCommunity,
     getCommunityImg,
     getCommunityBoard,
+    getCommunityComment,
+    getSearch,
     postCommunity,
     deleteCommunity,
     updateCommunity,

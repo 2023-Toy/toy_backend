@@ -36,10 +36,6 @@ async function getCommunity(){
             const tags = await commonDao.findTag(element.community_id)
             element.tag_name = tags.map(tag => tag.tag_name)
         }
-        for(const element of community_data){
-            const imgs = await communityDao.getCommunityImg(element.community_id)
-            element.community_path = imgs.map(img => img.community_path)
-        }
         return {
             "Message" : "성공",
             "Status" : 200,
@@ -72,6 +68,8 @@ async function getCommunityBoard(id){
             const imgs = await communityDao.getCommunityImg(id)
             element.community_path = imgs.map(img => img.community_path)
         }
+        const comment_data = await communityDao.getCommunityComment(id)
+        community_data.push(comment_data)
         return{
             "Message" : "성공",
             "Status" : 200,
@@ -80,6 +78,37 @@ async function getCommunityBoard(id){
     }
     catch (err){
         return{
+            "Message" : "실패",
+            "Status" : 400,
+            "Error_Message" : err
+        }
+    }
+}
+
+async function getSearch(search){
+    try{
+        if(search === '%undefined%'){
+            return {
+                "Message" : "search값이 없습니다.",
+                "Status" : 406
+            }
+        }
+        const community_data = await communityDao.getSearch(search)
+        if(!Object.keys(community_data).length){
+            return {
+                "Message" : "성공",
+                "Status" : 200,
+                "Data" : "검색 결과가 없습니다."
+            }
+        }
+        return {
+            "Message" : "성공",
+            "Status" : 200,
+            "Data" : community_data
+        }
+    }
+    catch (err){
+        return {
             "Message" : "실패",
             "Status" : 400,
             "Error_Message" : err
@@ -164,6 +193,7 @@ module.exports = {
     getMain,
     getCommunity,
     getCommunityBoard,
+    getSearch,
     postCommunity,
     deleteCommunity,
     updateCommunity
