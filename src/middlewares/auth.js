@@ -1,4 +1,3 @@
-
 const jwt = require('../module/jwt')
 const token_ex = -3 //토큰 만료
 const token_in = -2 //유효하지 않은 토큰

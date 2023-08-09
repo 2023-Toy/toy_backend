@@ -6,3 +6,4 @@ log/*.json
 log/*.log
 log/
 secretkey.js
+.idea
