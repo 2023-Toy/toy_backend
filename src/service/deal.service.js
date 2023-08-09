@@ -17,19 +17,53 @@ async function getListDeal(getListDeal_req) {
             }
         }
         for (const element of getListDeal_data) {
-            const tags = await dealDao.getListDeal_tag(element.deal_id);
+            const tags = await dealDao.getDeal_tag(element.deal_id);
             element.tag_name = tags.map(tag => tag.tag_name);
         }
         for(const element of getListDeal_data) {
             const image = await dealDao.getListDeal_img(element.deal_id);
             element.deal_img_path = image.map(img => img.deal_img_path);
         }
+        const deal_search_count = Number(Object.keys(getListDeal_data).at(-1)) + 1;
         return {
             "Message" : "성공",
             "Status" : 200,
-            "Data" : getListDeal_data
-        }
+            "Data" : {
+                "data" : getListDeal_data,
+                "search_count" : deal_search_count
+        }}
     } catch (err) {
+        return {
+            "Message" : "실패",
+            "Status" : 400,
+            "Error_Message" : err
+        }
+    }
+}
+//get_deal_service
+async function getDeal(getDeal_req) {
+    try {
+        if(!getDeal_req) {
+            return {
+                "Message" : "거래 글이 없습니다.",
+                "Status" : 406
+            }
+        }
+        const getDeal_data = await dealDao.getDeal(getDeal_req);
+        for (const element of getDeal_data) {
+            const tags = await dealDao.getDeal_tag(getDeal_req);
+            element.tag_name = tags.map(tag => tag.tag_name);
+        }
+        for(const element of getDeal_data) {
+            const image = await dealDao.getDeal_img(getDeal_req);
+            element.deal_img_path = image.map(img => img.deal_img_path);
+        }
+        return {
+            "Message" : "성공",
+            "Status" : 200,
+            "Data" : getDeal_data
+        }
+    } catch(err) {
         return {
             "Message" : "실패",
             "Status" : 400,
@@ -94,5 +128,5 @@ async function putDeal(putDeal_req, putDeal_img_req) {
 }
 
 module.exports = {
-    getListDeal, postDeal, putDeal
+    getListDeal, getDeal, postDeal, putDeal
 }

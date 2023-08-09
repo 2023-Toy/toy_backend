@@ -48,7 +48,7 @@ async function getListDeal_img(deal_id) {
         })
     })
 }
-async function getListDeal_tag(deal_id) {
+async function getDeal_tag(deal_id) {
     return new Promise((resolve, reject) => {
         var queryData = `SELECT t.tag_name
         FROM deal_tag dt
@@ -58,6 +58,41 @@ async function getListDeal_tag(deal_id) {
             if(error) {
                 logger.error(
                     'DB error [deal_tag]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            resolve(db_data)
+        })
+    })
+}
+//get_deal_dao
+async function getDeal(getDeal_req) {
+    return new Promise((resolve, reject) => {
+        var queryData = `SELECT * FROM deal WHERE deal_id = ${getDeal_req}`
+        db.query(queryData, (error, db_data) => {
+            if(error) {
+                logger.error(
+                    'DB error [deal]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            resolve(db_data)
+        })
+    })
+}
+async function getDeal_img(deal_id) {  //getListDeal_img 랑 너무 비슷한데 하나로 안될까
+    return new Promise((resolve, reject) => {
+        var queryData = `SELECT deal_img_path
+        FROM deal_image i INNER JOIN deal d ON d.deal_id = i.deal_id
+        WHERE i.deal_id = ${deal_id}`
+        db.query(queryData, (error, db_data) => {
+            if(error) {
+                logger.error(
+                    'DB error [deal_image]' +
                     '\n \t' + queryData +
                     '\n \t' + error
                 )
@@ -152,5 +187,5 @@ function putDeal(putDeal_req, putDeal_img_req) {
 }
 
 module.exports = {
-    getListDeal, getListDeal_img, getListDeal_tag, postDeal, postDeal_img, putDeal
+    getListDeal, getListDeal_img, getDeal_tag, getDeal, getDeal_img, postDeal, postDeal_img, putDeal
 }
