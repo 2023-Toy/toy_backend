@@ -84,7 +84,7 @@ async function getDeal(getDeal_req) {
         })
     })
 }
-async function getDeal_img(deal_id) {  //getListDeal_img 랑 너무 비슷한데 하나로 안될까
+async function getDeal_img(deal_id) {  //getListDeal_img 랑 너무 비슷한데 하나로 안되나
     return new Promise((resolve, reject) => {
         var queryData = `SELECT deal_img_path
         FROM deal_image i INNER JOIN deal d ON d.deal_id = i.deal_id
@@ -134,7 +134,6 @@ function postDeal_img(idx, postDeal_img_req, postDeal_id) {  //음..
     try{
         const filenames = postDeal_img_req;
         const img_length = filenames.length;
-        console.log("길이", img_length);
         const img_name = new Array();
         for (let i=0; i<img_length; i++) {
             img_name[i] = filenames[i].filename;
@@ -142,7 +141,7 @@ function postDeal_img(idx, postDeal_img_req, postDeal_id) {  //음..
             db.query(queryData, (error, db_data) => {
                 if(error) {
                     logger.error(
-                        'DB error [deal]' +
+                        'DB error [deal_image]' +
                         '\n \t' + queryData +
                         '\n \t' + error
                 )}
@@ -151,24 +150,17 @@ function postDeal_img(idx, postDeal_img_req, postDeal_id) {  //음..
             'post_deal_img Success ▶\t' + 'user_id : ' + idx + ', deal_id : ' + postDeal_id + " 성공\n"
         )
     } catch (err){
-            logger.error(
-                'DB error [deal_image]' +
-                '\n \t' + err
-            )
+        logger.error(
+            'DB error [deal_image]' +
+            '\n \t' + err
+        )
     }
 }
 
-//put_deal_dao -> 미완이요
-function putDeal(putDeal_req, putDeal_img_req) {
-    deal_id = putDeal_req.deal_id;
+//delete_deal_dao -> 사진 제외 ㅠ 사진은 따로
+function deleteDeal(idx, deleteDeal_req) {
     return new Promise((resolve, reject) => {
-        var queryData = `update deal, deal_image set deal_name = '${putDeal_req.deal_name}', deal_content = '${putDeal_req.deal_content}', 
-        deal_maintag = '${putDeal_req.deal_maintag}', deal_type = '${putDeal_req.deal_type}', deal_way = '${putDeal_req.deal_way}', 
-        deal_price = ${putDeal_req.deal_price}, deal_damage = ${putDeal_req.deal_damage}, deal_state = '${putDeal_req.deal_state}', 
-        deal_caution = '${putDeal_req.deal_caution}', is_m = ${putDeal_req.is_m}, start_age = ${putDeal_req.start_age}, 
-        end_age = ${putDeal_req.end_age}, gender = ${putDeal_req.gender}')
-        where deal_id = ${putDeal_req.deal_id}`;
-
+        var queryData = `delete from deal where deal_id = ${deleteDeal_req.deal_id}`;
         db.query(queryData, (error, db_data) => {
             if(error) {
                 logger.error(
@@ -178,8 +170,83 @@ function putDeal(putDeal_req, putDeal_img_req) {
                 )
                 reject("DB ERR")
             }
-            logger.info(
-                'put_deal Success ▶\t' + 'deal_id : ' + deal_id + " 성공\n"
+            else {
+                logger.info(
+                    'delete_deal Success ▶\t' + 'user_id : ' + idx + ', deal_id : ' + deleteDeal_req.deal_id + " 성공\n"
+                )
+            }
+            resolve(db_data)
+        })
+    })
+}
+
+//put_deal_dao
+function putDeal(deal_id, putDeal_req) {
+    return new Promise((resolve, reject) => {
+        var queryData = `update deal set deal_name = '${putDeal_req.deal_name}', deal_content = '${putDeal_req.deal_content}', 
+        deal_maintag = '${putDeal_req.deal_maintag}', deal_type = '${putDeal_req.deal_type}', deal_way = '${putDeal_req.deal_way}', 
+        deal_price = ${putDeal_req.deal_price}, deal_damage = ${putDeal_req.deal_damage}, deal_state = '${putDeal_req.deal_state}', 
+        deal_caution = '${putDeal_req.deal_caution}', is_m = ${putDeal_req.is_m}, start_age = ${putDeal_req.start_age}, 
+        end_age = ${putDeal_req.end_age}, gender = ${putDeal_req.gender}')
+        where deal_id = ${deal_id}`;
+        db.query(queryData, (error, db_data) => {
+            if(error) {
+                logger.error(
+                    'DB error [deal]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            logger.info (
+                'put_deal Success ▶\t' + 'user_id : ' + idx + ', deal_id : ' + deal_id + " 성공\n"
+            )
+            resolve(deal_id)
+        })
+    })
+}
+//put_deal_img_dao
+function putDeal_img(deal_id, putDeal_img_req) {
+    try{
+        const filenames = putDeal_img_req;
+        const img_length = filenames.length;
+        const img_name = new Array();
+        for (let i=0; i<img_length; i++) {
+            img_name[i] = filenames[i].filename;
+            var queryData = `update deal_image set deal_img_path = '/deal/${img_name[i]}' where deal_id = ${deal_id}`
+            db.query(queryData, (error, db_data) => {
+                if(error) {
+                    logger.error(
+                        'DB error [deal_image]' +
+                        '\n \t' + queryData +
+                        '\n \t' + error
+                )}
+            })  
+        } logger.info(
+            'put_deal_img Success ▶\t' + 'deal_id : ' + deal_id + " 성공\n"
+        )
+    } catch (err){
+        logger.error(
+            'DB error [deal_image]' +
+            '\n \t' + err
+        )
+    }
+}
+//put_state_deal_dao
+function putStateDeal(deal_id, deal_state) {
+    return new Promise((resolve, reject) => {
+        var queryData = `update deal set deal_state = '${deal_state}' where deal_id = ${deal_id}`;
+        db.query(queryData, (error, db_data) => {
+            if(error) {
+                logger.error(
+                    'DB error [deal]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            logger.info (
+                '거래 상태 수정 Success ▶\t' + 'deal_id : ' + deal_id + " 성공\n"
             )
             resolve(db_data)
         })
@@ -187,5 +254,5 @@ function putDeal(putDeal_req, putDeal_img_req) {
 }
 
 module.exports = {
-    getListDeal, getListDeal_img, getDeal_tag, getDeal, getDeal_img, postDeal, postDeal_img, putDeal
+    getListDeal, getListDeal_img, getDeal_tag, getDeal, getDeal_img, postDeal, postDeal_img, deleteDeal, putDeal, putDeal_img, putStateDeal
 }

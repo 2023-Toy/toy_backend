@@ -97,22 +97,41 @@ async function postDeal(idx, postDeal_req, postDeal_img_req) {
     }
 }
 
-//put_deal_service -> 미완이요
-async function putDeal(putDeal_req, putDeal_img_req) {
+//delete_deal_service
+async function deleteDeal(idx, deleteDeal_req) {
     try {
-        if (!putDeal_req) {
+        if(!idx || !deleteDeal_req) {
             return {
-                "Message" : "body data가 없습니다.",
+                "Message" : "요청 값이 없습니다.",
                 "Status" : 406
             }
         }
-        if (!putDeal_img_req) {
+        const deleteDeal_data = await dealDao.deleteDeal(idx, deleteDeal_req)
+        return {
+            "Message" : "성공",
+            "Status" : 200,
+            "Data" : deleteDeal_data
+        }
+    } catch(err) {
+        return {
+            "Message" : "실패",
+            "Status" : 406,
+            "Error_Message" : err
+        }
+    }
+}
+
+//put_deal_service
+async function putDeal(deal_id, putDeal_req, putDeal_img_req) {
+    try {
+        if (!deal_id || !putDeal_req || !putDeal_img_req) {
             return {
-                "Message" : "file data가 없습니다.",
+                "Message" : "data가 없습니다.",
                 "Status" : 406
             }
         }
-        const putDeal_data = await dealDao.putDeal(putDeal_req, putDeal_img_req);
+        const putDeal_data = await dealDao.putDeal(deal_id, putDeal_req);
+        await dealDao.putDeal_img(deal_id, putDeal_img_req);
         return {
             "Message" : "성공",
             "Status" : 200,
@@ -126,7 +145,30 @@ async function putDeal(putDeal_req, putDeal_img_req) {
         }
     }
 }
+//put_state_deal_service
+async function putStateDeal(deal_id, deal_state) {
+    try {
+        if(!deal_id || !deal_state) {
+            return {
+                "Message" : "data가 없습니다.",
+                "State" : 406
+            }
+        }
+        const putStateDeal_data = await dealDao.putStateDeal(deal_id, deal_state);
+        return {
+            "Message" : "성공",
+            "Status" : 200,
+            "Data" : putStateDeal_data
+        }
+    } catch(err) {
+        return {
+            "Message" : "실패",
+            "Status" : 400,
+            "Error_Message" : err
+        }
+    }
+}
 
 module.exports = {
-    getListDeal, getDeal, postDeal, putDeal
+    getListDeal, getDeal, postDeal, deleteDeal, putDeal, putStateDeal
 }
