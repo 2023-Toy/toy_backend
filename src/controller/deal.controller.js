@@ -3,17 +3,17 @@ const logger = require('../config/logger');
 //login.contoroller parameter 이용해서 put 보낼 수 있지 않을까...
 
 //get_list_deal_controller
-async function getlistDeal(req, res, next) {
+async function getListDeal(req, res, next) {
     try {
         console.log("controller 넘어오는 값", req.query);
         const getlistDeal_req = req.query;
-        const getlistDeal_data = await DealService.getlistDeal(getlistDeal_req);
+        const getlistDeal_data = await DealService.getListDeal(getlistDeal_req);
         return res.json(getlistDeal_data)
     } catch (err){
         logger.error(
             err
         )
-    console.log("post_deal 실패");
+    console.log("get_deal 실패");
 }
 }
 
@@ -44,7 +44,7 @@ async function putDeal(req, res, next) {
         const putDeal_img_req = req.files;
         const putDeal_data = await DealService.putDeal(putDeal_req, putDeal_img_req);
         console.log('edit!!!');
-        return res.status(putDeal_data.status)  //이게 맞나..?
+        return res.status(putDeal_data.Status)  //이게 맞나..?
     } catch (err){
         logger.error(
             err
@@ -54,5 +54,5 @@ async function putDeal(req, res, next) {
 }
 
 module.exports = {
-    getlistDeal, postDeal, putDeal
+    getListDeal, postDeal, putDeal
 }

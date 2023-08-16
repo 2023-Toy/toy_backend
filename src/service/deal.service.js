@@ -1,7 +1,7 @@
 const dealDao = require('../DAO/deal.dao')
 
 //get_list_deal
-async function getlistDeal(getlistDeal_req) {
+async function getListDeal(getlistDeal_req) {
     try {
         if(!getlistDeal_req) {
             return {
@@ -9,7 +9,7 @@ async function getlistDeal(getlistDeal_req) {
                 "Status" : 406
             }
         }
-        const getlistDeal_data = await dealDao.getlistDeal(getlistDeal_req);
+        const getlistDeal_data = await dealDao.getListDeal(getlistDeal_req);
         return {
             "Message" : "성공",
             "Status" : 200,
@@ -84,5 +84,5 @@ async function putDeal(putDeal_req, putDeal_img_req) {
 }
 
 module.exports = {
-    getlistDeal, postDeal, putDeal
+    getListDeal, postDeal, putDeal
 }
