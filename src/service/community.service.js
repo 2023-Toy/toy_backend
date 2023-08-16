@@ -110,7 +110,7 @@ async function getSearch(search) {
     }
 }
 
-async function postCommunity(user_id, title, content, community_img, community_tag) {
+async function postCommunity(user_id, token, title, content, community_img, community_tag) {
     try {
         console.log(user_id, title, content, community_img, community_tag)
         if (!user_id || !title || !content) {
@@ -119,7 +119,7 @@ async function postCommunity(user_id, title, content, community_img, community_t
                 "Status": 406
             }
         }
-        const community_id = await communityDao.postCommunity(user_id, title, content) //커뮤니티 테이블에 글 등록
+        const community_id = await communityDao.postCommunity(user_id, token, title, content) //커뮤니티 테이블에 글 등록
         if (community_img) {
             for (const e of community_img) {
                 await communityDao.postCommunityImg(community_id, e)

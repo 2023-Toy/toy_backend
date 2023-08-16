@@ -125,14 +125,14 @@ function getSearch(search) {
 }
 
 // 게시글 추가
-function postCommunity(user_id, title, content) {
+function postCommunity(user_id, token, title, content) {
     return new Promise((resolve, reject) => {
         const currentDateTime = new Date().toISOString().slice(0, 10)
         const queryData = `INSERT INTO Community (user_id, community_title, community_content, community_date) VALUES (${user_id}, "${title}", "${content}", '${currentDateTime}');`
         db.query(queryData, (error, db_data) => {
             if (error) {
                 logger.error(
-                    'DB error [community_게시글 추가]' +
+                    'DB error [community_게시글 추가]' + '=> ' + token,
                     '\n \t' + queryData +
                     '\n \t' + error
                 )
