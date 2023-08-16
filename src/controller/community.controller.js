@@ -37,8 +37,9 @@ async function getSearch(req, res, next) {
 async function postCommunity(req, res, next) {
     const jwt_token = req.headers.jwt_token
     const token = await jwt.verify(jwt_token)
-    const {title, content, img, tag} = req.body
-    const postCommunity_data = await CommunityService.postCommunity(token.IDX, title, content, img, tag)
+    const {title, content, community_tag} = req.body
+    const community_img = req.files.map(file => file.filename)
+    const postCommunity_data = await CommunityService.postCommunity(token.IDX, title, content, community_img, community_tag)
     return res.status(postCommunity_data.Status).json(postCommunity_data)
 }
 

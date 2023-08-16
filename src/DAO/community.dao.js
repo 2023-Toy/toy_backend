@@ -128,7 +128,7 @@ function getSearch(search) {
 function postCommunity(user_id, title, content) {
     return new Promise((resolve, reject) => {
         const currentDateTime = new Date().toISOString().slice(0, 10)
-        const queryData = `INSERT INTO community (user_id, community_title, community_content, community_date) VALUES (${user_id}, '${title}', '${content}', '${currentDateTime}')`;
+        const queryData = `INSERT INTO Community (user_id, community_title, community_content, community_date) VALUES (${user_id}, "${title}", "${content}", '${currentDateTime}');`
         db.query(queryData, (error, db_data) => {
             if (error) {
                 logger.error(
@@ -143,11 +143,11 @@ function postCommunity(user_id, title, content) {
     })
 }
 
-function postCommunityImg(community_id, img){
+function postCommunityImg(community_id, img) {
     return new Promise((resolve, reject) => {
-        const queryData = `insert into Community_image(community_id, community_path) values(${community_id}, '${img}')`
+        const queryData = `insert into Community_image(community_id, community_path) values(${community_id}, '${img}');`
         db.query(queryData, (error) => {
-            if(error){
+            if (error) {
                 logger.error(
                     'DB error [community_게시글 추가_이미지 추가]' +
                     '\n \t' + queryData +
@@ -160,11 +160,11 @@ function postCommunityImg(community_id, img){
     })
 }
 
-function postCommunityTag(community_id, tag_id){
+function postCommunityTag(community_id, tag_id) {
     return new Promise((resolve, reject) => {
-        const queryData = `insert into Community_tag(community_id, tag_id) values(${community_id}, '${tag_id}')`
+        const queryData = `insert into Community_tag(community_id, tag_id) values(${community_id}, '${tag_id}');`
         db.query(queryData, (error) => {
-            if(error){
+            if (error) {
                 logger.error(
                     'DB error [community_게시글 추가_태그 추가]' +
                     '\n \t' + queryData +
@@ -180,7 +180,7 @@ function postCommunityTag(community_id, tag_id){
 // 게시글 삭제
 function deleteCommunity(community_id) {
     return new Promise((resolve, reject) => {
-        const queryData = `DELETE FROM community WHERE community_id = ${community_id}`;
+        const queryData = `DELETE FROM community WHERE community_id = ${community_id};`
         db.query(queryData, [community_id], (error, db_data) => {
             if (error) {
                 logger.error(
@@ -198,7 +198,7 @@ function deleteCommunity(community_id) {
 // 게시글 수정
 function updateCommunity(community_id, community_title, community_content) {
     return new Promise((resolve, reject) => {
-        const queryData = `UPDATE community SET community_title = ${community_title}, community_content = ${community_content}, WHERE community_id = ${community_id}`;
+        const queryData = `UPDATE community SET community_title = ${community_title}, community_content = ${community_content}, WHERE community_id = ${community_id};`
         db.query(queryData, [community_title, community_content, community_id], (error, db_data) => {
             if (error) {
                 logger.error(

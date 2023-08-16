@@ -110,9 +110,9 @@ async function getSearch(search) {
     }
 }
 
-async function postCommunity(user_id, title, content, img, tag) {
+async function postCommunity(user_id, title, content, community_img, community_tag) {
     try {
-        console.log(user_id, title, content, img, tag)
+        console.log(user_id, title, content, community_img, community_tag)
         if (!user_id || !title || !content) {
             return {
                 "Message": "user_id 혹은 제목, 내용이 없습니다.",
@@ -120,15 +120,13 @@ async function postCommunity(user_id, title, content, img, tag) {
             }
         }
         const community_id = await communityDao.postCommunity(user_id, title, content) //커뮤니티 테이블에 글 등록
-        if (img) {
-            for (const e of img) {
-                console.log(e)
+        if (community_img) {
+            for (const e of community_img) {
                 await communityDao.postCommunityImg(community_id, e)
             }
         }
-        for (const e of tag) {
-            console.log(e)
-            // await communityDao.postCommunityTag(community_id, tag)
+        for (const e of community_tag) {
+            await communityDao.postCommunityTag(community_id, e)
         }
         return {
             "Message": "성공",
