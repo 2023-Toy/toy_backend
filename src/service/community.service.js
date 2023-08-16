@@ -1,6 +1,7 @@
 const communityDao = require('../DAO/community.dao')
 const logger = require('../config/logger')
 const commonDao = require('../DAO/common.dao')
+const fs = require("fs");
 
 async function getMain() {
     try {
@@ -112,13 +113,13 @@ async function getSearch(search) {
 
 async function postCommunity(user_id, token, title, content, community_img, community_tag) {
     try {
-        console.log(user_id, title, content, community_img, community_tag)
         if (!user_id || !title || !content) {
             return {
                 "Message": "user_id 혹은 제목, 내용이 없습니다.",
                 "Status": 406
             }
         }
+        const name = commonDao.findName(user_id)
         const community_id = await communityDao.postCommunity(user_id, token, title, content) //커뮤니티 테이블에 글 등록
         if (community_img) {
             for (const e of community_img) {
@@ -128,6 +129,9 @@ async function postCommunity(user_id, token, title, content, community_img, comm
         for (const e of community_tag) {
             await communityDao.postCommunityTag(community_id, e)
         }
+        logger.info(
+            '[Community 등록 시도] => ' + '[' + token + ']' + name + ' 성공'
+        )
         return {
             "Message": "성공",
             "Status": 200,
@@ -140,6 +144,65 @@ async function postCommunity(user_id, token, title, content, community_img, comm
         }
     }
 
+}
+
+async function putCommunity(id, token, community_id, title, content, community_img, community_tag){
+    try{
+        if(!community_id){
+            return {
+                "Message" : "실패",
+                "Status" : 406,
+                "Error" : "community_id가 없습니다."
+            }
+        }
+        const name = await commonDao.findName(id)
+        const preUserid = await commonDao.findCommunityUser(community_id)
+        if(!preUserid === id){
+            logger.error(
+                '[게시글 수정 ERROR] =>' + "[" + token + "] " + id,
+                '\n \t' + name +'은 community_id : ' + community_id +'의 작성자가 아님'
+            )
+            return {
+                "Message" : "실패",
+                "Status" : 406,
+                "Error" : name+"은 해당 게시글의 작성자가 아닙니다."
+            }
+        }
+        const community_img_data = await communityDao.getCommunityImg(community_id)
+        console.log(community_img_data)
+        community_img_data.forEach(path => {
+            fs.unlink(path, (err) => {
+                if(err){
+                    logger.error(
+                        '[커뮤니티 파일 삭제] => ' + path + ' 실패',
+                        '\n \t' + err
+                    )
+                }
+                else{
+                    logger.info(
+                        '[커뮤니티 파일 삭제] => ' + path + ' 성공'
+                    )
+                }
+            })
+        })
+        await communityDao.updateCommunity(community_id, title, content, token, name)
+        for (const e of community_img) {
+            await communityDao.postCommunityTag(community_id, e)
+        }
+        for (const e of community_tag) {
+            await communityDao.postCommunityTag(community_id, e)
+        }
+        return {
+            "Message" : "성공",
+            "Status" : 200
+        }
+    }catch (err){
+        return {
+            "Message": "실패",
+            "Status": 400,
+            "Error_Message": err
+        }
+    }
 }
 
 async function deleteCommunity(community_id) {
@@ -166,30 +229,6 @@ async function deleteCommunity(community_id) {
 
 }
 
-async function updateCommunity(community_id, community_title, community_content) {
-    try {
-        if (!community_id || !community_title || !community_content) {
-            return {
-                "Message": "community_id나 community_title, community_content가 없습니다.",
-                "Status": 406
-            }
-        }
-        const community_data = await communityDao.updateCommunity(community_id, community_title, community_content)
-        return {
-            "Message": "성공",
-            "Status": 200,
-            "Data": community_data
-        }
-    } catch (err) {
-        return {
-            "Message": "실패",
-            "Status": 400,
-            "Error_Message": err
-        }
-    }
-
-}
-
 
 module.exports = {
     getMain,
@@ -197,6 +236,6 @@ module.exports = {
     getCommunityBoard,
     getSearch,
     postCommunity,
+    putCommunity,
     deleteCommunity,
-    updateCommunity
-};
+}

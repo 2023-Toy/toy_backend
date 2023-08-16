@@ -13,4 +13,6 @@ router.get('/search', authUtil.checkToken, communityController.getSearch)
 
 router.post('/', authUtil.checkToken, uploads.commu_upload.array('community_img'), communityController.postCommunity)
 
+router.put('/', authUtil.checkToken, uploads.commu_upload.array('community_img'), communityController.putCommunity)
+
 module.exports = router;

@@ -26,5 +26,8 @@
   },
   "description": "toy project backend",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url" : "https://github.com/2023-Toy/toy_backend/issues"
+  }
 }
