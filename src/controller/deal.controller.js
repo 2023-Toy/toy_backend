@@ -25,21 +25,23 @@ async function postDeal(req, res, next) {
     return res.status(postDeal_data.Status).json(postDeal_data)
 }
 
-//delete_deal_controller -> 돌려보자
+//delete_deal_controller
 async function deleteDeal(req, res, next) {
     const jwt_token = req.headers.jwt_token
     const token = await jwt.verify(jwt_token)
-    const deleteDeal_req = req.body
+    const deleteDeal_req = req.body.deal_id
     const deleteDeal_data = await DealService.deleteDeal(token.IDX, deleteDeal_req)
     return res.status(deleteDeal_data.Status).json(deleteDeal_data)
 }
 
-//put_deal_controller -> 돌려보자
+//put_deal_controller
 async function putDeal(req, res, next) {
+    const jwt_token = req.headers.jwt_token
+    const token = await jwt.verify(jwt_token)
     const putDeal_deal_id = req.body.deal_id
     const putDeal_req = req.body
     const putDeal_img_req = req.files
-    const putDeal_data = await DealService.putDeal(putDeal_deal_id, putDeal_req, putDeal_img_req)
+    const putDeal_data = await DealService.putDeal(token.IDX, putDeal_deal_id, putDeal_req, putDeal_img_req)
     return res.status(putDeal_data.Status).json(putDeal_data)
 }
 //put_state_deal_controller

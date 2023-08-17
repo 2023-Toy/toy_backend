@@ -68,9 +68,9 @@ async function getDeal_tag(deal_id) {
     })
 }
 //get_deal_dao
-async function getDeal(getDeal_req) {
+async function getDeal(id) {
     return new Promise((resolve, reject) => {
-        var queryData = `SELECT * FROM deal WHERE deal_id = ${getDeal_req}`
+        var queryData = `SELECT * FROM deal WHERE deal_id = ${id}`
         db.query(queryData, (error, db_data) => {
             if(error) {
                 logger.error(
@@ -84,7 +84,7 @@ async function getDeal(getDeal_req) {
         })
     })
 }
-async function getDeal_img(deal_id) {  //getListDeal_img 랑 너무 비슷한데 하나로 안되나
+async function getDeal_img(deal_id) {
     return new Promise((resolve, reject) => {
         var queryData = `SELECT deal_img_path
         FROM deal_image i INNER JOIN deal d ON d.deal_id = i.deal_id
@@ -130,13 +130,14 @@ function postDeal(idx, postDeal_req) {
         })
     })
 }
-function postDeal_img(idx, postDeal_img_req, postDeal_id) {  //음..
+function postDeal_img(idx, postDeal_img_req, postDeal_id) {
     try{
         const filenames = postDeal_img_req;
         const img_length = filenames.length;
         const img_name = new Array();
         for (let i=0; i<img_length; i++) {
             img_name[i] = filenames[i].filename;
+            console.log("image " + i + " => " + img_name[i]);  //확인
             var queryData = `insert into deal_image(deal_id, deal_img_path) values (${postDeal_id}, '/deal/${img_name[i]}')`
             db.query(queryData, (error, db_data) => {
                 if(error) {
@@ -157,10 +158,10 @@ function postDeal_img(idx, postDeal_img_req, postDeal_id) {  //음..
     }
 }
 
-//delete_deal_dao -> 사진 제외 ㅠ 사진은 따로
-function deleteDeal(idx, deleteDeal_req) {
+//delete_deal_dao
+function deleteDeal(idx, id) {
     return new Promise((resolve, reject) => {
-        var queryData = `delete from deal where deal_id = ${deleteDeal_req.deal_id}`;
+        var queryData = `delete from deal where deal_id = ${id}`;
         db.query(queryData, (error, db_data) => {
             if(error) {
                 logger.error(
@@ -172,7 +173,7 @@ function deleteDeal(idx, deleteDeal_req) {
             }
             else {
                 logger.info(
-                    'delete_deal Success ▶\t' + 'user_id : ' + idx + ', deal_id : ' + deleteDeal_req.deal_id + " 성공\n"
+                    'delete_deal Success ▶\t' + 'user_id : ' + idx + ', deal_id : ' + id + " 성공\n"
                 )
             }
             resolve(db_data)
@@ -187,7 +188,7 @@ function putDeal(deal_id, putDeal_req) {
         deal_maintag = '${putDeal_req.deal_maintag}', deal_type = '${putDeal_req.deal_type}', deal_way = '${putDeal_req.deal_way}', 
         deal_price = ${putDeal_req.deal_price}, deal_damage = ${putDeal_req.deal_damage}, deal_state = '${putDeal_req.deal_state}', 
         deal_caution = '${putDeal_req.deal_caution}', is_m = ${putDeal_req.is_m}, start_age = ${putDeal_req.start_age}, 
-        end_age = ${putDeal_req.end_age}, gender = ${putDeal_req.gender}')
+        end_age = ${putDeal_req.end_age}, gender = ${putDeal_req.gender}
         where deal_id = ${deal_id}`;
         db.query(queryData, (error, db_data) => {
             if(error) {
@@ -198,44 +199,40 @@ function putDeal(deal_id, putDeal_req) {
                 )
                 reject("DB ERR")
             }
-            logger.info (
-                'put_deal Success ▶\t' + 'user_id : ' + idx + ', deal_id : ' + deal_id + " 성공\n"
-            )
+            else {
+                logger.info (
+                    'put_deal Success ▶\t' + 'deal_id : ' + deal_id + " 성공\n"
+                )
+            }
             resolve(deal_id)
         })
     })
 }
-//put_deal_img_dao
-function putDeal_img(deal_id, putDeal_img_req) {
-    try{
-        const filenames = putDeal_img_req;
-        const img_length = filenames.length;
-        const img_name = new Array();
-        for (let i=0; i<img_length; i++) {
-            img_name[i] = filenames[i].filename;
-            var queryData = `update deal_image set deal_img_path = '/deal/${img_name[i]}' where deal_id = ${deal_id}`
-            db.query(queryData, (error, db_data) => {
-                if(error) {
-                    logger.error(
-                        'DB error [deal_image]' +
-                        '\n \t' + queryData +
-                        '\n \t' + error
-                )}
-            })  
-        } logger.info(
-            'put_deal_img Success ▶\t' + 'deal_id : ' + deal_id + " 성공\n"
-        )
-    } catch (err){
-        logger.error(
-            'DB error [deal_image]' +
-            '\n \t' + err
-        )
-    }
+function putDeal_img(id) {
+    return new Promise((resolve, reject) => {
+        var queryData = `delete from deal_image where deal_id = ${id}`;
+        db.query(queryData, (error, db_data) => {
+            if(error) {
+                logger.error(
+                    'DB error [deal_image]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            else {
+                logger.info(
+                    '수정 전 deal_img 삭제 Success ▶\t' + 'deal_id : ' + id + " 성공\n"
+                )
+            }
+            resolve(id)
+        })
+    })
 }
 //put_state_deal_dao
-function putStateDeal(deal_id, deal_state) {
+function putStateDeal(id, deal_state) {
     return new Promise((resolve, reject) => {
-        var queryData = `update deal set deal_state = '${deal_state}' where deal_id = ${deal_id}`;
+        var queryData = `update deal set deal_state = '${deal_state}' where deal_id = ${id}`;
         db.query(queryData, (error, db_data) => {
             if(error) {
                 logger.error(
@@ -246,13 +243,85 @@ function putStateDeal(deal_id, deal_state) {
                 reject("DB ERR")
             }
             logger.info (
-                '거래 상태 수정 Success ▶\t' + 'deal_id : ' + deal_id + " 성공\n"
+                '거래 상태 수정 Success ▶\t' + 'deal_id : ' + id + " 성공\n"
             )
+            resolve(id)
+        })
+    })
+}
+
+//find_deal_id
+function findDeal(id) {
+    return new Promise((resolve, reject) => {
+        var queryData = `select deal_id from deal where deal_id = ${id}`
+        db.query(queryData, (error, db_data) => {
+            console.log("bb",db_data);
+            if(error) {
+                logger.error(
+                    'DB error [deal]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            else if(!db_data.length){
+                logger.error(
+                    'deal_id 조회 Fail ▶\t' + 'deal_id : ' + id + "실패\n"
+                )
+                db_data="empty"
+                resolve(db_data)
+            }
+            else{
+                logger.info(
+                    'deal_id 조회 Success ▶\t' + 'deal_id : ' + db_data[0].deal_id + " 성공\n"
+                )
+                resolve(db_data[0].deal_id)
+            }
+        })
+    })
+}
+//find_deal_img_path
+function findDealImg(id) {
+    return new Promise((resolve, reject) => {
+        var queryData = `select deal_img_path from deal_image where deal_id = ${id}`;
+        db.query(queryData, (error, db_data) => {
+            if(error) {
+                logger.error(
+                    'DB error [deal_image]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            // else if(!db_data.length){
+            //     logger.error(
+            //         'deal img 조회 Fail ▶\t' + 'deal_id : ' + id + "실패\n"
+            //     )
+            //     db_data="empty"
+            //     resolve(db_data)
+            // }
+            else {
+                logger.info(
+                    'deal img 조회 Success ▶\t' + 'deal_id : ' + id + ' 성공\n'
+                )
+            }
             resolve(db_data)
         })
     })
 }
 
 module.exports = {
-    getListDeal, getListDeal_img, getDeal_tag, getDeal, getDeal_img, postDeal, postDeal_img, deleteDeal, putDeal, putDeal_img, putStateDeal
+    getListDeal,
+    getListDeal_img, 
+    getDeal_tag, 
+    getDeal, 
+    getDeal_img,
+    postDeal, 
+    postDeal_img,
+    deleteDeal, 
+    putDeal, 
+    putDeal_img, 
+    putStateDeal, 
+    findDeal,
+    findDealImg,
 }

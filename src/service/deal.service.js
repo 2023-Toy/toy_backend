@@ -1,6 +1,7 @@
 const dealDao = require('../DAO/deal.dao')
+const fs = require("fs")
 
-//get_list_deal
+//get_list_deal_service
 async function getListDeal(getListDeal_req) {
     try {
         if(!getListDeal_req) {
@@ -45,17 +46,24 @@ async function getDeal(getDeal_req) {
     try {
         if(!getDeal_req) {
             return {
-                "Message" : "거래 글이 없습니다.",
+                "Message" : "요청 값이 없습니다.",
                 "Status" : 406
             }
         }
-        const getDeal_data = await dealDao.getDeal(getDeal_req);
+        const id = await dealDao.findDeal(getDeal_req)
+        if(id=="empty"){
+            return {
+                "Message" : "존재하지 않는 deal_id 입니다.",
+                "Status" : 400
+            }
+        }
+        const getDeal_data = await dealDao.getDeal(id);
         for (const element of getDeal_data) {
-            const tags = await dealDao.getDeal_tag(getDeal_req);
+            const tags = await dealDao.getDeal_tag(id);
             element.tag_name = tags.map(tag => tag.tag_name);
         }
         for(const element of getDeal_data) {
-            const image = await dealDao.getDeal_img(getDeal_req);
+            const image = await dealDao.getDeal_img(id);
             element.deal_img_path = image.map(img => img.deal_img_path);
         }
         return {
@@ -106,11 +114,28 @@ async function deleteDeal(idx, deleteDeal_req) {
                 "Status" : 406
             }
         }
-        const deleteDeal_data = await dealDao.deleteDeal(idx, deleteDeal_req)
+        const id = await dealDao.findDeal(deleteDeal_req)
+        if(id=="empty"){
+            return {
+                "Message" : "존재하지 않는 deal_id 입니다.",
+                "Status" : 400
+            }
+        }
+        const delete_img_data = await dealDao.findDealImg(id)
+        //deal_id 존재, image 존재X => 예외처리 필요? 
+        // if(delete_img_data=="empty"){
+        //     return {
+        //         "Message" : "이미지가 없습니다.",
+        //         "Status" : 400
+        //     }
+        // }
+        for(var i=0; i<delete_img_data.length; i++) {
+            fs.unlinkSync("src/public/images/" + delete_img_data[i].deal_img_path)
+        }
+        await dealDao.deleteDeal(idx, id)
         return {
             "Message" : "성공",
-            "Status" : 200,
-            "Data" : deleteDeal_data
+            "Status" : 200
         }
     } catch(err) {
         return {
@@ -122,16 +147,28 @@ async function deleteDeal(idx, deleteDeal_req) {
 }
 
 //put_deal_service
-async function putDeal(deal_id, putDeal_req, putDeal_img_req) {
+async function putDeal(idx, deal_id, putDeal_req, putDeal_img_req) {
     try {
-        if (!deal_id || !putDeal_req || !putDeal_img_req) {
+        if (!idx || !deal_id || !putDeal_req || !putDeal_img_req) {
             return {
                 "Message" : "data가 없습니다.",
                 "Status" : 406
             }
         }
-        const putDeal_data = await dealDao.putDeal(deal_id, putDeal_req);
-        await dealDao.putDeal_img(deal_id, putDeal_img_req);
+        const id = await dealDao.findDeal(deal_id)
+        if(id=="empty"){
+            return {
+                "Message" : "존재하지 않는 deal_id 입니다.",
+                "Status" : 400
+            }
+        }
+        const put_img_data = await dealDao.findDealImg(id)
+        for(var i=0; i<put_img_data.length; i++) {
+            fs.unlinkSync("src/public/images/" + put_img_data[i].deal_img_path)
+        }
+        await dealDao.putDeal_img(id);  //image 삭제
+        const putDeal_data = await dealDao.putDeal(id, putDeal_req);
+        await dealDao.postDeal_img(idx, putDeal_img_req, id);
         return {
             "Message" : "성공",
             "Status" : 200,
@@ -154,7 +191,14 @@ async function putStateDeal(deal_id, deal_state) {
                 "State" : 406
             }
         }
-        const putStateDeal_data = await dealDao.putStateDeal(deal_id, deal_state);
+        const id = await dealDao.findDeal(deal_id)
+        if(id=="empty"){
+            return {
+                "Message" : "존재하지 않는 deal_id 입니다.",
+                "Status" : 400
+            }
+        }
+        const putStateDeal_data = await dealDao.putStateDeal(id, deal_state);
         return {
             "Message" : "성공",
             "Status" : 200,
