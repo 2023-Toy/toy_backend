@@ -3,15 +3,9 @@ const fs = require("fs")
 const logger = require('../config/logger')
 const sign = require('../module/jwt').sign
 
-async function getLogin(access_token){
+async function getLogin(id){
     try{
-        if(!access_token){
-            return{
-                "Message" : "access_token이 없습니다.",
-                "Status" : 406
-            }
-        }
-        const login_data = await loginDao.getLogin(access_token)
+        const login_data = await loginDao.getLogin(id)
         return {
             "Message" : "성공",
             "Status" : 200,
@@ -67,15 +61,10 @@ async function deleteLogin(id){
         const login_data = await loginDao.findUser(id);
         if(!login_data){
             return {
-                "Message" : "존재하지 않는 user_id 입니다.",
+                "Message" : "존재하지 않는 user 입니다.",
                 "Status" : 400
             }
         }
-        const parameter = {
-            id : id,
-            name : "gkdl"//login_data.user_name
-        }
-        await loginDao.deleteLogin(parameter)
         if(login_data.profile_img != "profile/default.jpg" || login_data.profile_img != "profile/default.png"){
             try{
                 logger.info(
