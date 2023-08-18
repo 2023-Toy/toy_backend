@@ -65,6 +65,7 @@ async function deleteLogin(id){
                 "Status" : 400
             }
         }
+        await loginDao.deleteLogin(id)
         if(login_data.profile_img != "profile/default.jpg" || login_data.profile_img != "profile/default.png"){
             try{
                 logger.info(
