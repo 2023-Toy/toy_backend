@@ -53,7 +53,7 @@ async function getCommunityBoard(id) {
     try {
         if (!id) {
             return {
-                "Message": "id가 없습니다.",
+                "Message": "community_id가 없습니다.",
                 "Status": 400
             }
         }
@@ -113,7 +113,7 @@ async function getSearch(search) {
 
 async function postCommunity(user_id, token, title, content, community_img, community_tag) {
     try {
-        if (!user_id || !title || !content) {
+        if (!title || !content) {
             return {
                 "Message": "user_id 혹은 제목, 내용이 없습니다.",
                 "Status": 406
@@ -148,13 +148,6 @@ async function postCommunity(user_id, token, title, content, community_img, comm
 
 async function putCommunity(id, token, community_id, title, content, community_img, community_tag){
     try{
-        if(!community_id){
-            return {
-                "Message" : "실패",
-                "Status" : 406,
-                "Error" : "community_id가 없습니다."
-            }
-        }
         const name = await commonDao.findName(id)
         const preUserid = await commonDao.findCommunityUser(community_id)
         if(preUserid !== id){
@@ -231,12 +224,6 @@ async function putCommunity(id, token, community_id, title, content, community_i
 
 async function deleteCommunity(community_id) {
     try {
-        if (!community_id) {
-            return {
-                "Message": "community_id가 없습니다.",
-                "Status": 406
-            }
-        }
         const community_data = await communityDao.deleteCommunity(community_id)
         return {
             "Message": "성공",

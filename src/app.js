@@ -49,7 +49,7 @@ app.use(function(err, req, res, next) {
     'Server error' +
     '\n \t' + res.locals.error
   )
-  res.send({"Message" : "예외적이거나 예측하지 못한 에러 발생", "Status" : 500});
+  res.send({"Message" : "실패", "Status" : 500, "Error" : res.locals.error});
 });
 
 module.exports = app;

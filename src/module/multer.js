@@ -26,13 +26,17 @@ try {
 const fileFilter = (req, file, done) => {
     const type = file.mimetype.split('/');
     const fileType = type[1];
+    if(req.body.community_id === undefined || req.body.deal_id === undefined || req.body.user_id === undefined){
+        req.fileValidationError = "community_id 또는 deal_id 또는 user_id가 없습니다."
+        return done(req.fileValidationError, false)
+    }
     if(fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg' || fileType == 'gif'){
         req.fileValidationError = null;
         done(null, true); //파일 허용
     }
     else{
         req.fileValidationError = "지정된 파일이 아닙니다.";
-        done(req.fileValidationError, false) //파일 거부
+        return done(req.fileValidationError, false) //파일 거부
     }
 }
 
