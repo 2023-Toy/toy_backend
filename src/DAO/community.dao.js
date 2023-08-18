@@ -250,8 +250,8 @@ function updateCommunityImg(img_id, path){
 // 게시글 삭제
 function deleteCommunity(community_id) {
     return new Promise((resolve, reject) => {
-        const queryData = `DELETE FROM community WHERE community_id = ${community_id};`
-        db.query(queryData, [community_id], (error, db_data) => {
+        const queryData = `DELETE FROM Community WHERE community_id = ${community_id};`
+        db.query(queryData, [community_id], (error) => {
             if (error) {
                 logger.error(
                     'DB error [user]' +

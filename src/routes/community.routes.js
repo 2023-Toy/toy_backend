@@ -15,4 +15,6 @@ router.post('/', authUtil.checkToken, uploads.commu_upload.array('community_img'
 
 router.put('/', authUtil.checkToken, uploads.commu_upload.array('community_img'), communityController.putCommunity)
 
+router.delete('/', authUtil.checkToken, communityController.deleteCommunity)
+
 module.exports = router;

@@ -55,6 +55,14 @@ async function putCommunity(req, res, next) {
     return res.status(putCommunity_data.Status).json(putCommunity_data)
 }
 
+async function deleteCommunity(req, res, next){
+    const jwt_token = req.headers.jwt_token
+    const token = await jwt.verify(jwt_token)
+    const id = req.body.community_id
+    const deleteCommunity_data = await CommunityService.deleteCommunity(token.IDX, token.ACCESS_TOKEN, id)
+    return res.status(deleteCommunity_data.Status).json(deleteCommunity_data)
+}
+
 
 module.exports = {
     test,
@@ -64,4 +72,5 @@ module.exports = {
     getSearch,
     postCommunity,
     putCommunity,
+    deleteCommunity
 }

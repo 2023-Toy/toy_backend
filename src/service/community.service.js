@@ -152,7 +152,7 @@ async function putCommunity(id, token, community_id, title, content, community_i
         const preUserid = await commonDao.findCommunityUser(community_id)
         if(preUserid !== id){
             logger.error(
-                '[게시글 수정 ERROR] =>' + "[" + token + "] [" + id + " ] " + name +
+                '[게시글 수정 ERROR] =>' + "[access_token : " + token + "] [user_id : " + id + "] " + name +
                 '\n \t' + name +'은 community_id : ' + community_id +'의 작성자가 아님'
             )
             return {
@@ -222,13 +222,38 @@ async function putCommunity(id, token, community_id, title, content, community_i
     }
 }
 
-async function deleteCommunity(community_id) {
+async function deleteCommunity(id, token, community_id) {
     try {
-        const community_data = await communityDao.deleteCommunity(community_id)
+        const name = await commonDao.findName(id)
+        const preUserid = await commonDao.findCommunityUser(community_id)
+        console.log("사용 중인 id : " + id + " 커뮤니티 글 등록자 : " + preUserid)
+        const imgData = await communityDao.getCommunityImg(community_id)
+        console.log(imgData)
+        const img_data_path = imgData.map(row => row.community_path)
+        console.log(img_data_path)
+        if(preUserid !== id){
+            logger.error(
+                '[게시글 삭제 ERROR] => ' + "[access_token : " + token + "] [user_id : " + id + "] " + name +
+                '\n \t' + name +'은 community_id : ' + community_id +'의 작성자가 아님'
+            )
+            return {
+                "Message" : "실패",
+                "Status" : 406,
+                "Error" : name+"은 해당 게시글의 작성자가 아닙니다."
+            }
+        }
+        await communityDao.deleteCommunity(community_id)
+        img_data_path.forEach(path => {
+            try {
+                fs.unlinkSync("src/public/images/community/"+path);
+                logger.info('[커뮤니티 파일 삭제] => ' + path + ' 성공');
+            } catch (err) {
+                logger.error('[커뮤니티 파일 삭제] => ' + path + ' 실패' + '\n \t' + err);
+            }
+        })
         return {
             "Message": "성공",
             "Status": 200,
-            "Data": community_data
         }
     } catch (err) {
         return {
