@@ -15,7 +15,7 @@ function findName(id){
                 )
                 reject("DB ERR")
             }
-            resolve(db_data)
+            resolve(db_data[0].user_name)
         })
     })
 }
@@ -34,7 +34,7 @@ function findCommunityUser(id){
                 )
                 reject(error)
             }
-            resolve(db_data)
+            resolve(db_data[0].user_id)
         })
     })
 }
@@ -43,7 +43,7 @@ function findCommunityUser(id){
 function findTag(id){
     return new Promise((resolve, reject) => {
         console.log("-----findTag-----")
-        var queryData = `select t.tag_name from Community_tag ct
+        var queryData = `select ct.community_tag_id, t.tag_name from Community_tag ct
         join tag t on t.tag_id = ct.tag_id
         where ct.community_id = ${id};`
         db.query(queryData, (error, data) => {

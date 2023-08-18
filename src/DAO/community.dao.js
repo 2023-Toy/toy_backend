@@ -50,7 +50,7 @@ function getCommunity() {
 //커뮤니티 사진 조회
 function getCommunityImg(id) {
     return new Promise((resolve, reject) => {
-        var queryData = `select ci.community_path from Community_image ci
+        var queryData = `select ci.community_image_id, ci.community_path from Community_image ci
                         left join Community c ON ci.community_id = c.community_id
                         where ci.community_id = ${id};`
         db.query(queryData, (error, db_data) => {
@@ -138,7 +138,7 @@ function postCommunity(user_id, token, title, content) {
         db.query(queryData, (error, db_data) => {
             if (error) {
                 logger.error(
-                    'DB error [community_게시글 추가]' + '=> ' + token,
+                    'DB error [community_게시글 추가]' + '=> ' + token +
                     '\n \t' + queryData +
                     '\n \t' + error
                 )
@@ -188,18 +188,19 @@ function postCommunityTag(community_id, tag_id) {
 //게시글 수정
 function updateCommunity(community_id, community_title, community_content, token, name) {
     return new Promise((resolve, reject) => {
+        const currentDateTime = new Date().toISOString().slice(0, 10)
         let queryData
         if (!community_title) {
-            queryData = `UPDATE community SET community_content = "${community_content}", WHERE community_id = ${community_id};`
+            queryData = `UPDATE Community SET community_content = "${community_content}", community_date = '${currentDateTime}' WHERE community_id = ${community_id};`
         } else if (!community_content) {
-            queryData = `UPDATE community SET community_title = "${community_title}" WHERE community_id = ${community_id};`
+            queryData = `UPDATE Community SET community_title = "${community_title}", community_date = '${currentDateTime}' WHERE community_id = ${community_id};`
         } else {
-            queryData = `UPDATE community SET community_title = "${community_title}", community_content = "${community_content}", WHERE community_id = ${community_id};`
+            queryData = `UPDATE Community SET community_title = "${community_title}", community_content = "${community_content}", community_date = '${currentDateTime}' WHERE community_id = ${community_id};`
         }
         db.query(queryData, (error, db_data) => {
             if (error) {
                 logger.error(
-                    'DB error [community 게시글 수정] => ' + '[' + token + '] ' + name + " 실패",
+                    'DB error [community 게시글 수정] => ' + '[' + token + '] ' + name + " 실패"+
                     '\n \t' + queryData +
                     '\n \t' + error
                 )
@@ -210,13 +211,32 @@ function updateCommunity(community_id, community_title, community_content, token
     })
 }
 
-function updateCommunityTag(id, tag){
+//커뮤니티 태그 수정
+function updateCommunityTag(tag_id, tag){
     return new Promise((resolve, reject) => {
-        const queryData = `update Community_tag t set t.tag_id = ${tag} where t.community_id = ${id};`
+        const queryData = `update Community_tag t set t.tag_id = ${tag} where t.community_tag_id = ${tag_id};`
         db.query(queryData, (error, db_data) => {
             if(error){
                 logger.error(
-                    'DB error [user]' +
+                    'DB error [community 게시글 태그 수정]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            resolve(db_data)
+        })
+    })
+}
+
+//커뮤니티 사진 수정
+function updateCommunityImg(img_id, path){
+    return new Promise((resolve, reject) => {
+        const queryData = `update Community_image i set i.community_path = '${path}' where i.community_image_id = ${img_id}`
+        db.query(queryData, (error, db_data) => {
+            if(error){
+                logger.error(
+                    'DB error [community 게시글 사진 수정]' +
                     '\n \t' + queryData +
                     '\n \t' + error
                 )
@@ -240,7 +260,43 @@ function deleteCommunity(community_id) {
                 )
                 reject("DB ERR")
             }
-            resolve(db_data)
+            resolve("성공")
+        })
+    })
+}
+
+//커뮤니티 태그 삭제
+function deleteCommunityTag(tag_id){
+    return new Promise((resolve, reject) => {
+        const queryData = `delete from Community_tag where community_tag_id = ${tag_id};`
+        db.query(queryData, (error, db_data) => {
+            if(error){
+                logger.error(
+                    'DB error [community 게시글 태그 삭제]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            resolve("성공")
+        })
+    })
+}
+
+//커뮤니티 사진 삭제
+function deleteCommunityImg(img_id){
+    return new Promise((resolve, reject) => {
+        const queryData = `delete from Community_image where community_image_id = ${img_id};`
+        db.query(queryData, (error, db_data) => {
+            if(error){
+                logger.error(
+                    'DB error [community 게시글 이미지 삭제]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            resolve("성공")
         })
     })
 }
@@ -255,7 +311,10 @@ module.exports = {
     postCommunity,
     postCommunityImg,
     postCommunityTag,
-    deleteCommunity,
     updateCommunity,
-    updateCommunityTag
+    updateCommunityTag,
+    updateCommunityImg,
+    deleteCommunity,
+    deleteCommunityTag,
+    deleteCommunityImg
 }

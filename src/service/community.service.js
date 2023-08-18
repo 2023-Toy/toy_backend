@@ -157,9 +157,9 @@ async function putCommunity(id, token, community_id, title, content, community_i
         }
         const name = await commonDao.findName(id)
         const preUserid = await commonDao.findCommunityUser(community_id)
-        if(!preUserid === id){
+        if(preUserid !== id){
             logger.error(
-                '[게시글 수정 ERROR] =>' + "[" + token + "] " + id,
+                '[게시글 수정 ERROR] =>' + "[" + token + "] [" + id + " ] " + name +
                 '\n \t' + name +'은 community_id : ' + community_id +'의 작성자가 아님'
             )
             return {
@@ -168,29 +168,53 @@ async function putCommunity(id, token, community_id, title, content, community_i
                 "Error" : name+"은 해당 게시글의 작성자가 아닙니다."
             }
         }
-        const community_img_data = await communityDao.getCommunityImg(community_id)
-        console.log(community_img_data)
-        community_img_data.forEach(path => {
-            fs.unlink(path, (err) => {
-                if(err){
-                    logger.error(
-                        '[커뮤니티 파일 삭제] => ' + path + ' 실패',
-                        '\n \t' + err
-                    )
-                }
-                else{
-                    logger.info(
-                        '[커뮤니티 파일 삭제] => ' + path + ' 성공'
-                    )
+        if(community_img){
+            const community_img_data = await communityDao.getCommunityImg(community_id)
+            const img_data = community_img_data.map(row => row.community_path)
+            img_data.forEach(path => {
+                try {
+                    fs.unlinkSync("src/public/images/community/"+path);
+                    logger.info('[커뮤니티 파일 삭제] => ' + path + ' 성공');
+                } catch (err) {
+                    logger.error('[커뮤니티 파일 삭제] => ' + path + ' 실패' + '\n \t' + err);
                 }
             })
-        })
-        await communityDao.updateCommunity(community_id, title, content, token, name)
-        for (const e of community_img) {
-            await communityDao.postCommunityTag(community_id, e)
+            const img_data_id = community_img_data.map(row => row.community_image_id)
+            if(img_data_id.length === community_img.length){
+                for(const [i, e] of community_img.entries()){
+                    const currentImgId = img_data_id[i]
+                    await communityDao.updateCommunityImg(currentImgId, e)
+                }
+            }
+            else{
+                for(let i = 0; i < img_data_id.length; i++){
+                    await communityDao.deleteCommunityImg(img_data_id[i])
+                }
+                for(const t of community_img){
+                    await communityDao.postCommunityImg(community_id, t)
+                }
+            }
+
         }
-        for (const e of community_tag) {
-            await communityDao.postCommunityTag(community_id, e)
+        await communityDao.updateCommunity(community_id, title, content, token, name)
+        if(community_tag){
+            const tag = await commonDao.findTag(community_id)
+            const tag_id = tag.map(row => row.community_tag_id)
+            if(community_tag.length === tag_id.length){
+                for (let i = 0; i < tag_id.length; i++) {
+                    const currentTagId = tag_id[i]
+                    const currentTag = community_tag[i]
+                    await communityDao.updateCommunityTag(currentTagId, currentTag)
+                }
+            }
+            else{
+                for(let i = 0; i < tag_id.length; i++){
+                    await communityDao.deleteCommunityTag(tag_id[i])
+                }
+                for(const t of community_tag){
+                    await communityDao.postCommunityTag(community_id, t)
+                }
+            }
         }
         return {
             "Message" : "성공",
