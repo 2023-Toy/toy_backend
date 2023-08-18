@@ -58,6 +58,13 @@ async function getCommunityBoard(id) {
             }
         }
         const community_data = await communityDao.getCommunityBoard(id)
+        if(community_data.length === 0){
+            return {
+                Message : "성공",
+                Status : 200,
+                Data : "존재하지 않는 커뮤니티 게시글 입니다."
+            }
+        }
         for (const element of community_data) {
             const tags = await commonDao.findTag(id)
             element.tag_name = tags.map(tag => tag.tag_name)
@@ -66,11 +73,16 @@ async function getCommunityBoard(id) {
             const imgs = await communityDao.getCommunityImg(id)
             element.community_path = imgs.map(img => img.community_path)
         }
+        console.log(community_data)
         const comment_data = await communityDao.getCommunityComment(id)
+        const data = {
+            "community" : community_data,
+            "comment" : comment_data
+        }
         return {
             "Message": "성공",
             "Status": 200,
-            "Data": community_data
+            "Data": data
         }
     } catch (err) {
         return {

@@ -90,7 +90,7 @@ function getCommunityBoard(id) {
 //커뮤니티 댓글 조회
 function getCommunityComment(id) {
     return new Promise((resolve, reject) => {
-        const queryData = `select c.community_id, c.comment_content, c.comment_date, u.user_name, u.profile_img FROM Comment c
+        const queryData = `select c.community_id, c.comment_id, c.comment_content, c.comment_date, u.user_name, u.profile_img FROM Comment c
                            join \`user\` u on u.user_id = c.user_id
                            where c.community_id = ${id}
                            GROUP BY comment_id;`
