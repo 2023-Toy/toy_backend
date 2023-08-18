@@ -1,9 +1,9 @@
 const db = require('../config/db')
 const logger = require('../config/logger')
 
-function getLogin(token){
+function getLogin(id){
     return new Promise((resolve, reject) => {
-        var queryData = `select * from user where access_token ='${token}'`;
+        var queryData = `select * from user where user_id =${id}`;
         db.query(queryData, (error, db_data) => {
             if(error){
                 logger.error(
@@ -83,7 +83,7 @@ function findUser(id){
                 )
                 reject('DB ERR')
             }
-            else if(db_data){
+            else if(!db_data){
                 logger.error(
                     '회원 조회 Fail ▶\t user_id : ' + id + " 실패\n"
                 )

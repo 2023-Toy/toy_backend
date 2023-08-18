@@ -4,7 +4,7 @@ const jwt = require('../module/jwt')
 async function getLogin(req, res, next) {
     const jwt_token = req.headers.jwt_token
     const token = await jwt.verify(jwt_token)
-    const getLogin_data = await LoginService.getLogin(token.ACCESS_TOKEN)
+    const getLogin_data = await LoginService.getLogin(token.IDX)
     return res.status(getLogin_data.Status).json(getLogin_data)
 }
 
