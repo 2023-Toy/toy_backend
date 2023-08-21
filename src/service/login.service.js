@@ -7,15 +7,15 @@ async function getLogin(id){
     try{
         const login_data = await loginDao.getLogin(id)
         return {
-            "Message" : "성공",
-            "Status" : 200,
-            "Data" : login_data
+            Message : "성공",
+            Statu : 200,
+            Data : login_data
         }
     }catch(err){
         return {
-            "Message" : "실패",
-            "Status" : 400,
-            "Error_Message" : err
+            Message : "실패",
+            Status : 400,
+            Error : err
         }
     }
 
@@ -25,8 +25,8 @@ async function postLogin(parameter){
     try{
         if(!parameter.name || !parameter.age || !parameter.token){
             return{
-                "Message" : "요청값이 없습니다.",
-                "Status" : 406
+                Message : "요청값이 없습니다.",
+                Status : 406
             }
         }
         const id = await loginDao.postLogin(parameter)
@@ -36,16 +36,16 @@ async function postLogin(parameter){
         }
         const jwt_token = await sign(user)
         return {
-            "Message" : "성공",
-            "jwt_token" : jwt_token,
-            "Status" : 200,
+            Message : "성공",
+            jwt_token : jwt_token,
+            Status : 200,
         }
     }
     catch(err){
         return {
-            "Message" : "실패",
-            "Status" : 400,
-            "Error_Message" : err
+            Message : "실패",
+            Status : 400,
+            Error : err
         }
     }
 }
@@ -54,15 +54,15 @@ async function deleteLogin(id){
     try{
         if(!id){
             return {
-                "Message" : "user_id가 없습니다.",
-                "Status" : 406
+                Message : "user_id가 없습니다.",
+                Status : 406
             }
         }
         const login_data = await loginDao.findUser(id);
         if(!login_data){
             return {
-                "Message" : "존재하지 않는 user 입니다.",
-                "Status" : 400
+                Message : "존재하지 않는 user 입니다.",
+                Status : 400
             }
         }
         await loginDao.deleteLogin(id)
@@ -80,15 +80,15 @@ async function deleteLogin(id){
             }
         }
         return {
-            "Message" : "성공",
-            "Status" : 200
+            Message : "성공",
+            Status : 200
         }
     }
     catch(err){
         return {
-            "Message" : "실패",
-            "Status" : 400,
-            "Error_Message" : err
+            Message : "실패",
+            Status : 400,
+            Error : err
         }
     }
 }
