@@ -73,7 +73,6 @@ async function getCommunityBoard(id) {
             const imgs = await communityDao.getCommunityImg(id)
             element.community_path = imgs.map(img => img.community_path)
         }
-        console.log(community_data)
         const comment_data = await communityDao.getCommunityComment(id)
         const data = {
             "community" : community_data,
@@ -238,11 +237,8 @@ async function deleteCommunity(id, token, community_id) {
     try {
         const name = await commonDao.findName(id)
         const preUserid = await commonDao.findCommunityUser(community_id)
-        console.log("사용 중인 id : " + id + " 커뮤니티 글 등록자 : " + preUserid)
         const imgData = await communityDao.getCommunityImg(community_id)
-        console.log(imgData)
         const img_data_path = imgData.map(row => row.community_path)
-        console.log(img_data_path)
         if(preUserid !== id){
             logger.error(
                 '[게시글 삭제 ERROR] => ' + "[access_token : " + token + "] [user_id : " + id + "] " + name +
