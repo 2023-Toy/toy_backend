@@ -15,15 +15,15 @@ async function getMain() {
         //     element.tag_name = tags.map(tag => tag.tag_name);
         // }))
         return {
-            "Message": "성공",
-            "Status": 200,
-            "Data": community_data
+            Message: "성공",
+            Status: 200,
+            Data: community_data
         }
     } catch (err) {
         return {
-            "Message": "실패",
-            "Status": 400,
-            "Error_Message": err
+            Message: "실패",
+            Status: 400,
+            Error: err
         }
     }
 }
@@ -36,15 +36,15 @@ async function getCommunity() {
             element.tag_name = tags.map(tag => tag.tag_name)
         }
         return {
-            "Message": "성공",
-            "Status": 200,
-            "Data": community_data
+            Message: "성공",
+            Status: 200,
+            Data: community_data
         }
     } catch (err) {
         return {
-            "Message": "실패",
-            "Status": 400,
-            "Error_Message": err
+            Message: "실패",
+            Status: 400,
+            Error: err
         }
     }
 }
@@ -53,8 +53,8 @@ async function getCommunityBoard(id) {
     try {
         if (!id) {
             return {
-                "Message": "community_id가 없습니다.",
-                "Status": 400
+                Message: "community_id가 없습니다.",
+                Status: 400
             }
         }
         const community_data = await communityDao.getCommunityBoard(id)
@@ -80,15 +80,15 @@ async function getCommunityBoard(id) {
             "comment" : comment_data
         }
         return {
-            "Message": "성공",
-            "Status": 200,
-            "Data": data
+            Message: "성공",
+            Status: 200,
+            Data: data
         }
     } catch (err) {
         return {
-            "Message": "실패",
-            "Status": 400,
-            "Error_Message": err
+            Message: "실패",
+            Status: 400,
+            Error: err
         }
     }
 }
@@ -104,21 +104,21 @@ async function getSearch(search) {
         const community_data = await communityDao.getSearch(search)
         if (!Object.keys(community_data).length) {
             return {
-                "Message": "성공",
-                "Status": 200,
-                "Data": "검색 결과가 없습니다."
+                Message: "성공",
+                Status: 200,
+                Data: "검색 결과가 없습니다."
             }
         }
         return {
-            "Message": "성공",
-            "Status": 200,
-            "Data": community_data
+            Message: "성공",
+            Status: 200,
+            Data: community_data
         }
     } catch (err) {
         return {
-            "Message": "실패",
-            "Status": 400,
-            "Error_Message": err
+            Message: "실패",
+            Status: 400,
+            Error: err
         }
     }
 }
@@ -145,14 +145,14 @@ async function postCommunity(user_id, token, title, content, community_img, comm
             '[Community 등록 시도] => ' + '[' + token + ']' + name + ' 성공'
         )
         return {
-            "Message": "성공",
-            "Status": 200,
+            Message: "성공",
+            Status: 200,
         }
     } catch (err) {
         return {
-            "Message": "실패",
-            "Status": 400,
-            "Error_Message": err
+            Message: "실패",
+            Status: 400,
+            Error: err
         }
     }
 
@@ -168,9 +168,9 @@ async function putCommunity(id, token, community_id, title, content, community_i
                 '\n \t' + name +'은 community_id : ' + community_id +'의 작성자가 아님'
             )
             return {
-                "Message" : "실패",
-                "Status" : 406,
-                "Error" : name+"은 해당 게시글의 작성자가 아닙니다."
+                Message : "실패",
+                Status : 406,
+                Error : name+"은 해당 게시글의 작성자가 아닙니다."
             }
         }
         if(community_img){
@@ -222,14 +222,14 @@ async function putCommunity(id, token, community_id, title, content, community_i
             }
         }
         return {
-            "Message" : "성공",
-            "Status" : 200
+            Message : "성공",
+            Status : 200
         }
     }catch (err){
         return {
-            "Message": "실패",
-            "Status": 400,
-            "Error_Message": err
+            Message: "실패",
+            Status: 400,
+            Error: err
         }
     }
 }
@@ -249,9 +249,9 @@ async function deleteCommunity(id, token, community_id) {
                 '\n \t' + name +'은 community_id : ' + community_id +'의 작성자가 아님'
             )
             return {
-                "Message" : "실패",
-                "Status" : 406,
-                "Error" : name+"은 해당 게시글의 작성자가 아닙니다."
+                Message : "실패",
+                Status : 406,
+                Error : name+"은 해당 게시글의 작성자가 아닙니다."
             }
         }
         await communityDao.deleteCommunity(community_id)
@@ -264,14 +264,14 @@ async function deleteCommunity(id, token, community_id) {
             }
         })
         return {
-            "Message": "성공",
-            "Status": 200,
+            Message: "성공",
+            Status: 200,
         }
     } catch (err) {
         return {
-            "Message": "실패",
-            "Status": 400,
-            "Error_Message": err
+            Message: "실패",
+            Status: 400,
+            Error: err
         }
     }
 
