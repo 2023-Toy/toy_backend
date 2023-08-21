@@ -5,7 +5,7 @@ const uploads = require('../module/multer')
 const authUtil = require('../middlewares/auth')
 
 router.get('/login', authUtil.checkToken, loginController.getLogin);
-router.post('/login', uploads.profile_upload.single("profile_img"),loginController.postLogin)
-router.delete('/withdraw', loginController.deleteLogin);
+router.post('/login', uploads.profile_upload.single("profile_img"), loginController.postLogin)
+router.delete('/withdraw', authUtil.checkToken,loginController.deleteLogin);
 
 module.exports = router;

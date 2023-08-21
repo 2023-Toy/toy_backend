@@ -22,4 +22,4 @@ function handleDisconnect (client){
         conn.connect();
     });
 };
-module.exports =  db;
+module.exports = db;
