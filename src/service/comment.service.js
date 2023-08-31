@@ -43,8 +43,44 @@ async function postComment(id, token, community_id, comment_content){
     }
 }
 
-async function putComment(){
+//커뮤니티 댓글 수정
+async function putComment(id, token, comment_id, comment_content){
+    try{
+        if(!comment_content && !comment_id){
+            return {
+                Message : "실패",
+                Status : 406,
+                Error : "comment_id와 댓글 내용이 없습니다."
+            }
+        }
+        else if(!comment_id){
+            return {
+                Message : "실패",
+                Status : 406,
+                Error : "comment_id가 없습니다."
+            }
+        }
+        else if(!comment_content){
+            return {
+                Message : "실패",
+                Status : 406,
+                Error : "댓글 내용이 없습니다."
+            }
+        }
+        //id 비교
+        const name = await commonDao.findName(id)
+        await commentDao.putComment(id, comment_id, comment_content)
+        logger.info(
+            '[Comment 등록 시도] => ' + '[' + token + '] ' + name + ' 성공'
+        )
+        return {
+            Message: "성공",
+            Status : 200
+        }
+    }
+    catch (err){
 
+    }
 }
 
 async function deleteComment(){

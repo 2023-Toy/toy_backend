@@ -18,6 +18,12 @@ function postComment(id, token, community_id, comment_content){
         })
     })
 }
+
+function putComment(id, comment_id, comment_content){
+
+}
+
 module.exports = {
-    postComment
+    postComment,
+    putComment
 }

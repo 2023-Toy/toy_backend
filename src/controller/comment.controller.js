@@ -12,8 +12,8 @@ async function postComment(req, res, next){
 async function putComment(req, res, next){
     const jwt_token = req.headers.jwt_token
     const token = await jwt.verify(jwt_token)
-    const {community_id, comment_content} = req.body
-    const putComment_data = await commentService.putComment(token.IDX, token.ACCESS_TOKEN, community_id, comment_content)
+    const {comment_id, comment_content} = req.body
+    const putComment_data = await commentService.putComment(token.IDX, token.ACCESS_TOKEN, comment_id, comment_content)
     return res.status(putComment_data.Status).json(putComment_data)
 }
 
