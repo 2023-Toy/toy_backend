@@ -9,6 +9,7 @@ var usersRouter = require('./routes/users');
 var communityRouter = require('./routes/community.routes');
 var dealRouter = require('./routes/deal.routes');
 var memberRouter = require('./routes/member.routes')
+var commentRouter = require('./routes/comment.routers');
 
 var app = express();
 
@@ -16,7 +17,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-if(process.env.ENODE_ENV=='production'){
+if(process.env.ENODE_ENV==='production'){
   app.use(logger('combined'))
 }else{
   app.use(logger('dev'))
@@ -28,9 +29,11 @@ app.use(express.static(path.join(__dirname, 'public/images')));
 
 app.use('/', loginRouter);
 app.use('/users', usersRouter);
-app.use('/board', communityRouter);
+app.use('/community', communityRouter);
 app.use('/deal', dealRouter);
 app.use('/profile', memberRouter);
+app.use('/comment', commentRouter);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -50,7 +53,7 @@ app.use(function(err, req, res, next) {
     'Server error' +
     '\n \t' + res.locals.error
   )
-  res.send({"Message" : "예외적이거나 예측하지 못한 에러 발생", "Status" : 500});
+  res.send({"Message" : "실패", "Status" : 500, "Error" : res.locals.error});
 });
 
 module.exports = app;

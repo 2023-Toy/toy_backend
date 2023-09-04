@@ -3,13 +3,13 @@ const logger = require('../config/logger')
 var user_id, deal_id;
 
 //get_list_deal_dao -> tag, image_path, like, search_count
-async function getlistDeal(getlistDeal_req) {
-    console.log("확인", getlistDeal_req.deal_search_name);
+async function getListDeal(getlistDeal_req) {
     return new Promise((resolve, reject) => {
-        var queryData = `select deal_name, deal_maintag, deal_price, deal_damage, deal_state
-        from deal where deal_name like concat('%', '${getlistDeal_req.deal_search_name}', '%')`
-        //var queryData_like = `select * from like l where l.user_id = ${getlistDeal_req.user_id} and l.deal_id = ${getlistDeal_req.deal_id}`
-//        (select count(*) from deal where  deal_name like concat('%', '${getlistDeal_req.deal_search_name}', '%')) as 'deal_search_count' 
+        var queryData = `SELECT deal_name, deal_maintag, deal_price, deal_damage, deal_state,
+        if(h.user_id = d.user_id AND h.deal_id = d.deal_id, 1, 0) as deal_like,
+        (select count(*) from deal where deal_name like concat('%', '${getlistDeal_req.deal_search_name}', '%')) as deal_search_count
+        FROM deal d, heart h
+        WHERE deal_name like CONCAT('%', '${getlistDeal_req.deal_search_name}', '%')`
         db.query(queryData, (error, db_data) => {
             if(error) {
                 logger.error(
@@ -19,11 +19,7 @@ async function getlistDeal(getlistDeal_req) {
                 )
                 reject("DB ERR")
             }
-            console.log("추가 전", db_data);
-            
-            //const deal_like = queryData_like != undefined ? 1 : 0
-            //db_data.deal_like = queryData_like;
-            //console.log("추가 후", db_data);
+            console.log("dao 데이터", db_data);
             resolve(db_data)
         })
     })
@@ -100,15 +96,14 @@ function postdeal_img(postDeal_img_req) {
 
 //put_deal_dao
 //image랑 한번에 처리할 수 있을까 ,,,,,,,,
-//수정한 부분만 받아서 하기.... -> 아예 안넘어오는건지, null로 넘어오는건지
 function putDeal(putDeal_req, putDeal_img_req) {
-    user_id = putDeal_req.user_id;
+    // 얘 안받아오는데... user_id = putDeal_req.user_id; -> 토큰으로 받아온다함
     deal_id = putDeal_req.deal_id;
     return new Promise((resolve, reject) => {
-        var queryData = `update deal, deal_image set deal_name = '${putDeal_req.deal_name}', deal_content = '${putDeal_req.deal_content}, 
-        deal_maintag = '${putDeal_req.deal_maintag}, deal_type = '${putDeal_req.deal_type}, deal_way = '${putDeal_req.deal_way}, 
+        var queryData = `update deal, deal_image set deal_name = '${putDeal_req.deal_name}', deal_content = '${putDeal_req.deal_content}', 
+        deal_maintag = '${putDeal_req.deal_maintag}', deal_type = '${putDeal_req.deal_type}', deal_way = '${putDeal_req.deal_way}', 
         deal_price = ${putDeal_req.deal_price}, deal_damage = ${putDeal_req.deal_damage}, deal_state = '${putDeal_req.deal_state}', 
-        deal_caution = '${putDeal_req.deal_caution}, is_m = ${putDeal_req.is_m}, start_age = ${putDeal_req.start_age}, 
+        deal_caution = '${putDeal_req.deal_caution}', is_m = ${putDeal_req.is_m}, start_age = ${putDeal_req.start_age}, 
         end_age = ${putDeal_req.end_age}, gender = ${putDeal_req.gender}')
         where deal_id = ${putDeal_req.deal_id}`;
 
@@ -122,7 +117,7 @@ function putDeal(putDeal_req, putDeal_img_req) {
                 reject("DB ERR")
             }
             logger.info(
-                'put_deal Success ▶\t' + 'user_id : ' + user_id + ', deal_id : ' + deal_id + " 성공\n"
+                'put_deal Success ▶\t' + 'deal_id : ' + deal_id + " 성공\n"
             )
             resolve(db_data)
         })
@@ -130,5 +125,5 @@ function putDeal(putDeal_req, putDeal_img_req) {
 }
 
 module.exports = {
-    getlistDeal, postDeal, putDeal
+    getListDeal, postDeal, putDeal
 }
