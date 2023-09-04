@@ -8,6 +8,7 @@ var loginRouter = require('./routes/login.routes');
 var usersRouter = require('./routes/users');
 var communityRouter = require('./routes/community.routes');
 var dealRouter = require('./routes/deal.routes');
+var memberRouter = require('./routes/member.routes')
 
 var app = express();
 
@@ -29,7 +30,7 @@ app.use('/', loginRouter);
 app.use('/users', usersRouter);
 app.use('/board', communityRouter);
 app.use('/deal', dealRouter);
-
+app.use('/profile', memberRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
