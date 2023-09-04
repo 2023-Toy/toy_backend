@@ -9,15 +9,13 @@ async function getLogin(req, res, next) {
 }
 
 async function postLogin(req, res, next) {
-    const jwt_token = req.headers.jwt_token
-    const token = await jwt.verify(jwt_token)
-    const {user_name, user_age} = req.body
+    const {user_name, user_age, access_token} = req.body
     const profile_img = req.file !== undefined ? "profile/" + req.file.filename : "profile/default.jpg"
     const parameter = {
         name: user_name,
         age: user_age,
         img: profile_img,
-        token: token.ACCESS_TOKEN
+        token:access_token
     }
     const postLogin_data = await LoginService.postLogin(parameter)
     return res.status(postLogin_data.Status).json(postLogin_data)
