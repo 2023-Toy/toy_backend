@@ -102,9 +102,33 @@ async function getRecent(deal_id){
     }
 }
 
+async function getHeart(IDX){
+    try{
+        if(!IDX){
+            return{
+                "Message" : "user_id가 없습니다.",
+                "Status" : 406
+            }
+        }
+        const heart_data = await memberDAO.getHeart(IDX)
+        return{
+            "Message": "성공",
+            "Status": 200,
+            "Data": heart_data
+        }
+    }catch (e){
+        return{
+            "Message": "실패",
+            "Status": 400,
+            "Error_Message": e
+        }
+    }
+}
+
 module.exports = {
     getProfile,
     updateName,
     updateImg,
-    getRecent
+    getRecent,
+    getHeart
 }

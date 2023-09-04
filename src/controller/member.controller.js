@@ -33,7 +33,10 @@ async function getRecentList(req, res, next){
 
 }
 async function getHeartList(req, res, next){
-
+    const jwt_token = req.headers.jwt_token
+    const token = await jwt.verify(jwt_token)
+    const heart_data = await MemberService.getHeart(token.IDX)
+    return res.status(heart_data.Status).json(heart_data)
 }
 
 module.exports = {
