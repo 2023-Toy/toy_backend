@@ -28,7 +28,25 @@ function findCommunityUser(id){
         db.query(queryData, (error, db_data) => {
             if(error){
                 logger.error(
-                    'DB error [community_tag 조회]'+
+                    'DB error [community_user 조회]'+
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject(error)
+            }
+            resolve(db_data[0].user_id)
+        })
+    })
+}
+
+function findCommentUser(id){
+    return new Promise((resolve, reject) => {
+        console.log("-----find Comment User-----")
+        var queryData = `select c.user_id from Comment c where c.Comment_id = ${id};`
+        db.query(queryData, (error, db_data) => {
+            if(error){
+                logger.error(
+                    'DB error [comment_user 조회]' +
                     '\n \t' + queryData +
                     '\n \t' + error
                 )
@@ -63,5 +81,6 @@ function findTag(id){
 module.exports = {
     findName,
     findTag,
-    findCommunityUser
+    findCommunityUser,
+    findCommentUser
 }

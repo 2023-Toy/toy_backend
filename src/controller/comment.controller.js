@@ -20,8 +20,8 @@ async function putComment(req, res, next){
 async function deleteComment(req, res, next){
     const jwt_token = req.headers.jwt_token
     const token = await jwt.verify(jwt_token)
-    const community_id = req.body.community_id
-    const deleteComment_data = await commentService.deleteComment(token.IDX, token.ACCESS_TOKEN, community_id)
+    const comment_id = req.body.comment_id
+    const deleteComment_data = await commentService.deleteComment(token.IDX, token.ACCESS_TOKEN, comment_id)
     return res.status(deleteComment_data.Status).json(deleteComment_data)
 }
 

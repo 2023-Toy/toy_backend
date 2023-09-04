@@ -8,7 +8,7 @@ async function getLogin(id){
         const login_data = await loginDao.getLogin(id)
         return {
             Message : "성공",
-            Statu : 200,
+            Status : 200,
             Data : login_data
         }
     }catch(err){
