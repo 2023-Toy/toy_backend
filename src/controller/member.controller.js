@@ -25,11 +25,11 @@ async function getRecentList(req, res, next){
     const recentList = req.query.deals;
     const deal_List = recentList.split(',');
     var db_Data = [];
-    deal_List.forEach(e =>{
-        const recent_data = MemberService.getRecent(e)
-        console.log(recent_data)
-    })
-    return res.status(200)
+    for (const e of deal_List) {
+        const recent_data = await MemberService.getRecent(e)
+        db_Data.push(recent_data.Data[0])
+    }
+    return res.status(200).json({"Message":"성공",'Status':200,'Data':db_Data})
 
 }
 async function getHeartList(req, res, next){

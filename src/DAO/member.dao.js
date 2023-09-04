@@ -71,7 +71,7 @@ function updateImg(user_id, profile_img){
 
 function getRecent(deal_id){
     return new Promise((resolve, reject) =>{
-        const queryData = `GET deal_name, deal_img_path, deal_maintag, deal_type, deal_price from deal where deal_id = ?`
+        const queryData = `select d.deal_name, di.deal_img_path, d.deal_maintag, d.deal_type, d.deal_price from deal d left join deal_image di on d.deal_id = di.deal_id where d.deal_id = ? limit 1`
         db.query(queryData, [deal_id], (err, db_data)=>{
             if(err){
                 logger.error(
