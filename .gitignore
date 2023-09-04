@@ -5,4 +5,4 @@ src/public/images
 log/*.json
 log/*.log
 log/
-secretkey.js
+src/config/secretkey.js
