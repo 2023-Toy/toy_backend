@@ -21,7 +21,7 @@ Link : [multer license](https://github.com/expressjs/multer#readme)
 
 ## path &nbsp; <span style="color:#808080"> MIT </span>
 
-Link : [path license] (https://nodejs.org/docs/latest/api/path.html)
+Link : [path license](https://nodejs.org/docs/latest/api/path.html)
 
 ## fs-extra &nbsp; <span style="color:#808080"> MIT </span>
 
