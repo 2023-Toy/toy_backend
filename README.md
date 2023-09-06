@@ -7,8 +7,8 @@ Nodejs Express project
 장난감 재사용을 통해 환경 오염을 줄이고, 부모의 장난감 및 육아 용품 비용 부담 완화를 위한 사용자 거래 플랫폼
 
 # :busts_in_silhouette: BACKEND Member
-- 유상훈 : API 개발
-- 안수민 : user, baby 관련 API 개발
+- 유상훈 : 회원 API 개발
+- 안수민 : 로그인, 커뮤니티 관련 API 개발
 - 정다겸 : 커뮤니티 관련 API 개발
 - 최승희 : 거래 관련 API 개발
 
