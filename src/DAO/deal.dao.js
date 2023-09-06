@@ -1,6 +1,44 @@
 const db = require('../config/db')
 const logger = require('../config/logger')
 
+//get_main_dao
+async function getMain(baby_age, getMain_req) {
+    return new Promise((resolve, reject) => {
+        var queryData = `select deal_id, deal_name, deal_maintag, deal_price from deal, baby
+        where ${baby_age} >= ${getMain_req.start_age} and ${baby_age} <= ${getMain_req.end_age}
+        and baby_gender = ${getMain_req.gender}
+        limit 10`;
+        db.query(queryData, (error, db_data) => {
+            if(error) {
+                logger.error(
+                    'DB error [deal]' +
+                    '\n \t' + queryData +
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            resolve(db_data)
+        })
+    })
+}
+async function getMain_r(count, getMain_req) {
+    return new Promise((resolve, reject) => {
+        var queryData = `select deal_id, deal_name, deal_maintag, deal_price from deal, baby
+        where baby_gender = ${getMain_req.gender}
+        limit ${count}`;
+        db.query(queryData, (error, db_data) => {
+            if(error) {
+                logger.error(
+                    'DB error [deal]' +
+                    '\n \t' + queryData + 
+                    '\n \t' + error
+                )
+                reject("DB ERR")
+            }
+            resolve(db_data)
+        })
+    })
+}
 //get_list_deal_dao
 async function getListDeal(getlistDeal_req) {
     return new Promise((resolve, reject) => {
@@ -311,6 +349,8 @@ function findDealImg(id) {
 }
 
 module.exports = {
+    getMain,
+    getMain_r,
     getListDeal,
     getListDeal_img, 
     getDeal_tag, 

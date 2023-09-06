@@ -1,55 +1,54 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+var createError = require("http-errors");
+var express = require("express");
+var path = require("path");
+var cookieParser = require("cookie-parser");
+var logger = require("morgan");
 
-var loginRouter = require('./routes/login.routes');
-var usersRouter = require('./routes/users');
-var communityRouter = require('./routes/community.routes');
-var dealRouter = require('./routes/deal.routes');
+var loginRouter = require("./routes/login.routes");
+var usersRouter = require("./routes/users");
+var communityRouter = require("./routes/community.routes");
+var dealRouter = require("./routes/deal.routes");
+var babyRouter = require("./routes/baby.routes");
 
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "jade");
 
-if(process.env.ENODE_ENV=='production'){
-  app.use(logger('combined'))
-}else{
-  app.use(logger('dev'))
+if (process.env.ENODE_ENV == "production") {
+  app.use(logger("combined"));
+} else {
+  app.use(logger("dev"));
 }
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public/images')));
+app.use(express.static(path.join(__dirname, "public/images")));
 
-app.use('/', loginRouter);
-app.use('/users', usersRouter);
-app.use('/board', communityRouter);
-app.use('/deal', dealRouter);
+app.use("/", loginRouter);
+app.use("/users", usersRouter);
+app.use("/board", communityRouter);
+app.use("/deal", dealRouter);
+app.use("/profile", babyRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  
-  const logger = require('./config/logger')
+  res.locals.error = req.app.get("env") === "development" ? err : {};
+
+  const logger = require("./config/logger");
 
   // render the error page
   res.status(err.status || 500);
-  logger.error(
-    'Server error' +
-    '\n \t' + res.locals.error
-  )
-  res.send({"Message" : "예외적이거나 예측하지 못한 에러 발생", "Status" : 500});
+  logger.error("Server error" + "\n \t" + res.locals.error);
+  res.send({ Message: "예외적이거나 예측하지 못한 에러 발생", Status: 500 });
 });
 
 module.exports = app;

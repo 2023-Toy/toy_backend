@@ -1,5 +1,66 @@
 const dealDao = require('../DAO/deal.dao')
+const lodash = require("lodash")
 const fs = require("fs")
+
+//get_main_service
+async function getMain(getMain_req, baby_birthday, is_month) {
+    var baby_age;
+    var baby = new Date(baby_birthday);
+    var baby_year = baby.getFullYear();
+    var today = new Date();
+    var year = today.getFullYear();
+    var getMain_data;
+    var getMain_r_data;
+    try {
+        if(!getMain_req || !baby_birthday || !is_month) {
+            return {
+                "Message" : "요청 값이 없습니다.",
+                "Status" : 406
+            }
+        }
+        if(is_month == 1) {  // 개월 수
+            var difference= Math.abs(today - baby);
+            days = difference/(1000 * 3600 * 24)
+            var baby_ages = days / 30;
+            baby_age = parseInt(baby_ages);
+            getMain_data = await dealDao.getMain(baby_age, getMain_req);
+        }
+        else {  // 년 수
+            baby_age = year - baby_year + 1;
+            console.log("년수", baby_age)
+            getMain_data = await dealDao.getMain(baby_age, getMain_req);
+        }
+        for(const element of getMain_data) {  // image 처리
+            const image = await dealDao.getListDeal_img(element.deal_id);
+            element.deal_img_path = image.map(img => img.deal_img_path);
+        }
+        const getMain_count = 10-(Number(Object.keys(getMain_data).at(-1)) + 1);
+        //중복 제거 해줘야함;;;; 방법은 찾았는데 데이터 두 개를 합쳐야 함..
+        if(getMain_count<10) {
+            getMain_r_data = await dealDao.getMain_r(getMain_count, getMain_req);
+            for(const element of getMain_r_data) {  // image 처리
+                const image = await dealDao.getListDeal_img(element.deal_id);
+                element.deal_img_path = image.map(img => img.deal_img_path);
+            }
+            for(const element of getMain_data) {
+                console.log("어떻게나올까요....")
+            }
+        }
+        _.uniqBy(getMain_data, "deal_id");
+        return {
+            "Message" : "성공",
+            "Status" : 200,
+            "Data" : getMain_data
+        }
+    }
+    catch (err) {
+        return {
+            "Message" : "실패",
+            "Status" : 400,
+            "Error_Message" : err
+        }
+    }
+}
 
 //get_list_deal_service
 async function getListDeal(getListDeal_req) {
@@ -130,7 +191,7 @@ async function deleteDeal(idx, deleteDeal_req) {
         //     }
         // }
         for(var i=0; i<delete_img_data.length; i++) {
-            fs.unlinkSync("src/public/images/" + delete_img_data[i].deal_img_path)
+            fs.unlinkSync("src/public/images" + delete_img_data[i].deal_img_path)
         }
         await dealDao.deleteDeal(idx, id)
         return {
@@ -164,7 +225,7 @@ async function putDeal(idx, deal_id, putDeal_req, putDeal_img_req) {
         }
         const put_img_data = await dealDao.findDealImg(id)
         for(var i=0; i<put_img_data.length; i++) {
-            fs.unlinkSync("src/public/images/" + put_img_data[i].deal_img_path)
+            fs.unlinkSync("src/public/images" + put_img_data[i].deal_img_path)
         }
         await dealDao.putDeal_img(id);  //image 삭제
         const putDeal_data = await dealDao.putDeal(id, putDeal_req);
@@ -214,5 +275,5 @@ async function putStateDeal(deal_id, deal_state) {
 }
 
 module.exports = {
-    getListDeal, getDeal, postDeal, deleteDeal, putDeal, putStateDeal
+   getMain, getListDeal, getDeal, postDeal, deleteDeal, putDeal, putStateDeal
 }
